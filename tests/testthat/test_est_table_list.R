@@ -185,9 +185,6 @@ lbci_med <- semlbci(fit_med,
                              "y ~ m",
                              "ab :="),
                     use_pbapply = FALSE)
-lbci_med
-
-print(lbci_med, sem_out = fit_med, output = "text")
 
 status_to_str <- function(object) {
     tmp <- object$post_check_lb
