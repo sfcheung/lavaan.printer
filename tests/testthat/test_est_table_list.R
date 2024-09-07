@@ -161,252 +161,85 @@ expect_true(any(grepl("Thresholds", tmp, fixed = TRUE)))
 expect_true(any(grepl("(d2)", tmp, fixed = TRUE)))
 })
 
+
 test_that("EFA", {
-skip("Internal tests")
-# https://lavaan.ugent.be/tutorial/efa.html
-
-ex5_25 <- read.table("http://statmodel.com/usersguide/chap5/ex5.25.dat")
-names(ex5_25) = paste0("y",1:12)
-model <- '
-    # efa block
-    efa("efa1")*f1 +
-    efa("efa1")*f2 =~ y1 + y2 + y3 + y4 + y5 + y6
-
-    # cfa block
-    f3 =~ y7 + y8 + y9
-    f4 =~ y10 + y11 + y12
-
-    # regressions
-    f3 ~ f1 + f2
-    f4 ~ f3
+library(lavaan)
+data(HolzingerSwineford1939)
+mod <- '
+# efa block
+efa("efa")*f1 + efa("efa")*f2 =~ x1 + x2 + x3 + x4 + x5 + x6
+# cfa block
+f3 =~ x7 + x8 + x9
+# regression
+f3 ~ f1 + f2
 '
-fit <- sem(model = model, data = ex5_25, rotation = "geomin",
-           # mimic Mplus
-           information = "observed",
-           rotation.args = list(rstarts = 30, row.weights = "none",
-                                algorithm = "gpa", std.ov = TRUE,
-                                geomin.epsilon = 0.0001),
-           meanstructure = TRUE)
+fit <- sem(model = mod,
+           data = HolzingerSwineford1939,
+           rotation = "geomin",
+           rotation.args = list(geomin.epsilon = 0.01, rstarts = 1))
 summary(fit)
 est <- parameterEstimates(fit, standardized = TRUE, rsquare = TRUE, add.attributes = TRUE, head = TRUE)
 out <- parameterEstimates_table_list(est,
                                      est_FUNs = list(add_sig,
                                                      add_ci_sig))
-print_parameterEstimates_table_list(out,
-                                    drop_cols = "Std.lv")
+out <- capture.output(print_parameterEstimates_table_list(out,
+                                                          drop_cols = "Std.lv"))
+expect_true(any(grepl(" =~ efa", out)))
 })
 
-test_that("semlbci", {
-skip_on_cran()
-if (isFALSE(requireNamespace("semlbci", quietly = TRUE))) {
-    skip("semlbci not installed")
-  }
-library(semlbci)
+test_that("funs", {
 library(lavaan)
-mod <-
-"
-m ~ a*x
-y ~ b*m
-ab := a * b
-"
-fit_med <- sem(mod, simple_med, fixed.x = FALSE)
-p_table <- parameterTable(fit_med)
-p_table
-lbci_med <- semlbci(fit_med,
-                    pars = c("m ~ x",
-                             "y ~ m",
-                             "ab :="),
-                    use_pbapply = FALSE)
+data(HolzingerSwineford1939)
+HS.model <- ' visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6
+              speed   =~ x7 + x8 + x9
+              '
+fit <- cfa(HS.model, data = HolzingerSwineford1939)
 
-status_to_str <- function(object) {
-    tmp <- object$post_check_lb
-    if (!is.null(tmp)) {
-        tmp <- ifelse(tmp, "OX", "Not OK")
-        tmp[is.na(tmp)] <- ""
-        object$post_check_lb <- tmp
-      }
-    tmp <- object$post_check_ub
-    if (!is.null(tmp)) {
-        tmp <- ifelse(tmp, "OX", "Not OK")
-        tmp[is.na(tmp)] <- ""
-        object$post_check_ub <- tmp
-      }
-    object
-  }
-out <- parameterEstimates_table_list(lbci_med,
-                                     fit_object = fit_med,
-                                     drop_cols = c("status_lb",
-                                                   "status_ub",
-                                                   "ratio_lb",
-                                                   "ratio_ub",
-                                                   "id",
-                                                   "time_lb",
-                                                   "time_ub",
-                                                   "method"),
-                                     rename_cols = c("post_check_lb" = "lbOK",
-                                                     "post_check_ub" = "ubOK",
-                                                     "ci_org_lb" = "Org_lb",
-                                                     "ci_org_ub" = "Org_ub",
-                                                     "lbci_lb" = "LB_lb",
-                                                     "lbci_ub" = "LB_ub"),
-                                     est_funs = list(status_to_str))
-tmp <- capture.output(print_parameterEstimates_table_list(out,
-                                                          na_str = "--"))
-expect_true(any(grepl("LB_lb", tmp)))
-expect_true(any(grepl("OX", tmp)))
-expect_false(any(grepl("status_ub", tmp)))
-})
-
-test_that("semlrtp", {
-skip_on_cran()
-if (isFALSE(requireNamespace("semlrtp", quietly = TRUE))) {
-    skip("semlrtp not installed")
-  }
-library(semlrtp)
-library(lavaan)
-data(data_sem16)
-mod <-
-"
-f1 =~ x1 + x2 + x3
-f2 =~ x4 + x5 + x6
-f3 =~ x7 + x8 + x9
-f4 =~ x10 + x11 + x12
-f2 ~~ f1
-f3 ~ f1 + f2
-f4 ~ f3
-"
-fit <- sem(mod, data_sem16)
-fit_lrtp <- lrtp(fit, progress = FALSE)
-
-semlrtp_test_footer <- function(x) {
+test_section <- function(x,
+                         arg1 = "field:",
+                         arg2 = "value",
+                         section_name = "Section Name:") {
     # A test header
     out0 <- list(field = character(0),
                  val = character(0))
-    ids <- attr(x, "ids")
     out0$field <- c(out0$field,
-                    "The number of tests:")
+                    arg1)
     out0$val <- c(out0$val,
-                  as.character(length(ids)))
+                  arg2)
     out <- data.frame(out0)
     colnames(out) <- c("", "")
-    attr(out, "section_title") <- "LRTp Test Footer:"
+    attr(out, "section_title") <- section_name
     attr(out, "print_args") <- list(right = FALSE,
                                     row.names = FALSE)
     out
   }
-
-semlrtp_test_footer2 <- function(x) {
-    # A test header
-    out <- c("- A long note.",
-             "- A short note.")
-    attr(out, "section_title") <- "Note:"
-    attr(out, "print_args") <- list(sep = "\n")
-    attr(out, "print_fun") <- "cat"
-    out
-  }
-
-out <- parameterEstimates_table_list(fit_lrtp,
-                                     drop_cols = c("se",
-                                                   "z",
-                                                   "ci.lower",
-                                                   "ci.upper",
-                                                   "fit0_ok",
-                                                   "vcov_ok",
-                                                   "LRT_ok",
-                                                   "post_check_ok",
-                                                   "LRT_id"),
-                                     fit_object = fit,
-                                     rename_cols = c(converge_ok = "New_OK"),
-                                     est_funs = list(add_sig),
-                                     header_funs = semlrtp_test_footer2,
-                                     footer_funs = list(semlrtp_test_footer,
-                                                        semlrtp_test_footer2))
-
-tmp <- capture.output(print_parameterEstimates_table_list(out,
-                                                          drop_cols = c("LRT", "converge_ok"),
-                                                          na_str = "..."))
-expect_true(any(grepl("Note:", tmp, fixed = TRUE)))
-expect_true(any(grepl("A long note", tmp, fixed = TRUE)))
-expect_false(any(grepl("converged_ok", tmp, fixed = TRUE)))
-})
-
-test_that("semhelpinghands", {
-skip_on_cran()
-if (isFALSE(requireNamespace("semhelpinghands", quietly = TRUE))) {
-    skip("semhelpinghands not installed")
-  }
-if (isFALSE(requireNamespace("semlrtp", quietly = TRUE))) {
-    skip("semlrtp not installed")
-  }
-library(lavaan)
-suppressMessages(library(semhelpinghands))
-library(semlrtp)
-mod <-
-"
-f1 =~ x1 + x2 + x3
-f2 =~ x4 + x5 + x6
-f3 =~ x7 + x8 + x9
-f4 =~ x10 + x11 + x12
-f2 ~~ f1
-f3 ~ f1 + f2
-f4 ~ f3
-"
-fit_boot <- sem(mod, data_sem16, se = "bootstrap", bootstrap = 50, iseed = 1234,
-                warn = FALSE)
-est <- standardizedSolution_boot_ci(fit_boot)
-
-add_ci_sig_boot <- function(x) {add_ci_sig(x,
-                                           ci.lower = "boot.ci.lower",
-                                           ci.upper = "boot.ci.upper")}
-
-fix_std_attributes <- function(object) {
-    out1 <- attr(object, "pe_attrib")
-    out1$names <- NULL
-    out1$row.names <- NULL
-    out1$class <- NULL
-    # Do not overwrite existing attributes
-    for (x in names(out1)) {
-        if (!(x %in% names(attr(object, x)))) {
-            attr(object, x) <- out1[[x]]
-          }
-      }
-    object
-  }
-est <- fix_std_attributes(est)
-names(attributes(est))
-out <- parameterEstimates_table_list(est,
-                                     fit_object = fit_boot,
-                                     drop_cols = c("ci.lower",
-                                                   "ci.upper",
-                                                   "boot.se",
-                                                   "se",
-                                                   "z",
-                                                   "pvalue"),
-                                     rename_cols = c("boot.ci.lower" = "BootCI.Lo",
-                                                     "boot.ci.upper" = "BootCI.Up",
-                                                     "est.std" = "Standardized"),
-                                     est_funs = add_ci_sig_boot)
-expect_output(print_parameterEstimates_table_list(out),
-              "Sig.")
-
-out <- parameterEstimates_table_list(est,
-                                     fit_object = fit_boot,
-                                     drop_cols = c("ci.lower",
-                                                   "ci.upper",
-                                                   "boot.se",
-                                                   "se",
-                                                   "z",
-                                                   "pvalue"),
-                                     rename_cols = c("boot.ci.lower" = "BootCI.Lo",
-                                                     "boot.ci.upper" = "BootCI.Up",
-                                                     "est.std" = "Standardized"),
-                                     est_funs = add_ci_sig,
-                                     est_funs_args = list(list(yes = "SIG.",
-                                                               no = "N.S.",
-                                                               ci.lower = "boot.ci.lower",
-                                                               ci.upper = "boot.ci.upper")))
+out <- parameterEstimates_table_list(fit,
+                                     est_funs = list(add_ci_sig,
+                                                     add_sig),
+                                     header_funs = list(test_section,
+                                                        test_section),
+                                     est_funs_args = list(list(yes = "YES", no = "NO"),
+                                                          list(breaks = c(1, .05, -Inf),
+                                                               labels = c("*", "n.s."))),
+                                     header_funs_args = list(list(section_name = "Header 1:"),
+                                                             list(section_name = "Header 2::",
+                                                                  arg2 = "Arg2_2",
+                                                                  arg1 = "Arg2_1:")),
+                                     footer_funs = list(test_section,
+                                                        test_section,
+                                                        test_section),
+                                     footer_funs_args = list(list(),
+                                                             list(arg1 = "Footer Field 1:",
+                                                                  arg2 = "Footer Value 1",
+                                                                  section_name = "Footer 2::"),
+                                                             list()))
 tmp <- capture.output(print_parameterEstimates_table_list(out))
-expect_true(any(grepl("SIG.", tmp, fixed = TRUE)))
-expect_true(any(grepl("BootCI.Up CI.Sig", tmp, fixed = TRUE)))
-expect_false(any(grepl("Sig.", tmp, fixed = TRUE)))
+expect_true(any(grepl("Footer 2::", tmp, fixed = TRUE)))
+expect_true(any(grepl("Footer Field 1:", tmp, fixed = TRUE)))
+expect_true(any(grepl("Header 2::", tmp, fixed = TRUE)))
+expect_true(any(grepl("CI.Sig", tmp, fixed = TRUE)))
+expect_true(any(grepl("*", tmp, fixed = TRUE)))
+expect_true(any(grepl("n.s.", tmp, fixed = TRUE)))
 })
+

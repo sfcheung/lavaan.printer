@@ -1,6 +1,6 @@
 Package: lavaan.printer
 Title: Helper Functions For Printing 'lavaan' Outputs
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R:
     c(person(given = "Shu Fai",
              family = "Cheung",
@@ -19,9 +19,6 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Suggests:
     testthat (>= 3.0.0),
-    semhelpinghands,
-    semlbci,
-    semlrtp,
 Imports:
     utils,
     methods,

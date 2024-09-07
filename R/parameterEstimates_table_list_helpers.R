@@ -61,10 +61,21 @@ add_header_attributes <- function(object,
 #' @noRd
 # A wrapper to create the list of header sections
 add_header <- function(object,
-                       FUNs = list()) {
-    out0 <- lapply(FUNs,
-                   do.call,
-                   list(object))
+                       FUNs = list(),
+                       args = list(list())) {
+    # out0 <- lapply(FUNs,
+    #                do.call,
+    #                list(object))
+    out0 <- mapply(function(fun0, args0, object0) {
+                      args1 <- utils::modifyList(list(object0),
+                                                 args0)
+                      do.call(fun0,
+                              args1)
+                    },
+                   fun0 = FUNs,
+                   args0 = args,
+                   MoreArgs = list(object0 = object),
+                   SIMPLIFY = FALSE)
     out0
   }
 

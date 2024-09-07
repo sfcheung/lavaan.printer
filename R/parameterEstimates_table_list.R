@@ -458,10 +458,13 @@ parameterEstimates_table_list <- function(object,
 
     out_header <- add_header(est,
                              FUNs = c(header_funs,
-                                      list(add_header_lavaan)))
+                                      list(add_header_lavaan)),
+                             args = c(header_funs_args,
+                                      list(list())))
 
     out_footer <- add_header(est,
-                             FUNs = footer_funs)
+                             FUNs = footer_funs,
+                             args = footer_funs_args)
 
     out <- list(group = out_group,
                 model = out_model,
