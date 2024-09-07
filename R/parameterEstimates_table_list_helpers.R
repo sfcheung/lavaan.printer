@@ -63,9 +63,6 @@ add_header_attributes <- function(object,
 add_header <- function(object,
                        FUNs = list(),
                        args = list(list())) {
-    # out0 <- lapply(FUNs,
-    #                do.call,
-    #                list(object))
     out0 <- mapply(function(fun0, args0, object0) {
                       args1 <- utils::modifyList(list(object0),
                                                  args0)
@@ -310,9 +307,6 @@ to_tables_per_group <- function(section,
                         not_to_na = se_not_to_na)
     # Can use user-functions to format or add columns
     if (length(FUNs) > 0) {
-        # for (FUNi in FUNs) {
-        #     out0 <- FUNi(out0)
-        #   }
         for (i in seq_along(FUNs)) {
             args0 <- utils::modifyList(list(out0),
                                        args[[i]])
