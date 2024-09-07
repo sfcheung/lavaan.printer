@@ -245,6 +245,9 @@ parameterEstimates_table_list <- function(object,
             # Add header information
             est <- add_header_attributes(object,
                                          fit_object)
+          } else {
+            # TODO: Should be able to proceed even with out fit_object
+            stop("'fit_object' must be set to the original lavaan output if a data.frame is supplied.")
           }
         est_df <- as.data.frame(object)
       } else if (inherits(object, "lavaan")) {

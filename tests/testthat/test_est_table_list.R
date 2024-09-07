@@ -1,6 +1,5 @@
-skip("WIP")
-
-library(magrittr)
+library(testthat)
+library(lavaan.printer)
 
 add_sig <- function(object) {
     tmp <- object$pvalue
@@ -41,9 +40,10 @@ add_ci_sig <- function(object,
     out
   }
 
+
+test_that("Models with thresholds", {
 library(lavaan)
-HolzingerSwineford1939$x2 <- cut(HolzingerSwineford1939$x2, breaks = 3)
-head(HolzingerSwineford1939)
+data(HolzingerSwineford1939)
 HS.model <- ' visual  =~ x1 + x2 + x3
               textual =~ x4 + x5 + x6 + x8
               speed   =~ x7 + x8 + c(d1, d2)*x9
@@ -58,17 +58,7 @@ HS.model <- ' visual  =~ x1 + x2 + x3
 fit <- cfa(HS.model,
            data = HolzingerSwineford1939,
            meanstructure = TRUE,
-           group = "school",
-           ordered = "x2")
-print(parameterEstimates(fit,
-                         standardized = TRUE,
-                         fmi = TRUE,
-                         rsquare =  TRUE,
-                         remove.system.eq = FALSE,
-                         remove.eq = FALSE,
-                         remove.ineq = FALSE,
-                         output = "text"),
-      nd = 2)
+           group = "school")
 est <- parameterEstimates(fit,
                           standardized = TRUE,
                           rsquare =  TRUE,
@@ -77,31 +67,55 @@ est <- parameterEstimates(fit,
                           remove.ineq = FALSE,
                           add.attributes = TRUE,
                           head = TRUE)
-summary(fit, ci = TRUE, standardized = TRUE)
-out <- parameterEstimates_table_list(fit, remove.eq = FALSE, standardized = TRUE, ci = TRUE, rsquare = TRUE)
-print_parameterEstimates_table_list(out)
-print_parameterEstimates_table_list(out, by_group = FALSE)
-print_parameterEstimates_table_list(out, nd = 4)
-print_parameterEstimates_table_list(out, nd = 2)
-print_parameterEstimates_table_list(out, nd = 2, na_str = "--")
+# summary(fit, ci = TRUE, standardized = TRUE)
+out <- parameterEstimates_table_list(fit,
+                                     remove.eq = FALSE,
+                                     standardized = TRUE,
+                                     ci = TRUE,
+                                     rsquare = TRUE)
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(max(which(grepl("Group 1", tmp, fixed = TRUE))) <
+            min(which(grepl("Group 2", tmp, fixed = TRUE))))
+tmp <- capture.output(print_parameterEstimates_table_list(out, by_group = FALSE))
+expect_false(max(which(grepl("Group 1", tmp, fixed = TRUE))) <
+             min(which(grepl("Group 2", tmp, fixed = TRUE))))
+expect_true(all(which(grepl("Group 1", tmp, fixed = TRUE)) <
+                which(grepl("Group 2", tmp, fixed = TRUE))))
+expect_true(any(grepl("0.0000",
+                      capture.output(print_parameterEstimates_table_list(out, nd = 4)),
+                      fixed = TRUE)))
+expect_true(any(grepl("0.00",
+                      capture.output(print_parameterEstimates_table_list(out, nd = 2)),
+                      fixed = TRUE)))
+expect_true(any(grepl("--",
+                      capture.output(print_parameterEstimates_table_list(out, nd = 2, na_str = "--")),
+                      fixed = TRUE)))
+out <- parameterEstimates_table_list(est,
+                                     fit_object = fit)
+expect_false(any(grepl("Std.lv",
+                       capture.output(print_parameterEstimates_table_list(out,
+                                                                          nd = 5,
+                                                                          drop_cols = "std.lv")),
+                       fixed = TRUE)))
+})
 
-out <- parameterEstimates_table_list(est)
-print_parameterEstimates_table_list(out, nd = 5,
-                                    drop_cols = "std.lv")
-
-
+test_that("Typical CFA with error covariances", {
 library(lavaan)
-head(HolzingerSwineford1939)
+data(HolzingerSwineford1939)
 HS.model2 <- 'textual =~ x4 + x5 + x6
               speed   =~ x7 + x8 + x9
               x5 ~~ x9
               '
 fit2 <- cfa(HS.model2, data = HolzingerSwineford1939, meanstructure = TRUE)
-summary(fit2)
 out <- parameterEstimates_table_list(fit2, remove.eq = FALSE, standardized = TRUE, ci = TRUE, rsquare = TRUE)
-print_parameterEstimates_table_list(out)
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(any(grepl(".x5 ~~", tmp, fixed = TRUE)))
+expect_true(any(grepl(" .x9", tmp, fixed = TRUE)))
+})
 
+test_that("Multigroup CFA with equality constraints", {
 library(lavaan)
+data(HolzingerSwineford1939)
 HolzingerSwineford1939$x2 <- cut(HolzingerSwineford1939$x2, breaks = 3)
 head(HolzingerSwineford1939)
 HS.model <- ' visual  =~ x1 + x2 + x3
@@ -109,12 +123,14 @@ HS.model <- ' visual  =~ x1 + x2 + x3
               speed   =~ x7 + x8 + c(d1, d2)*x9
               '
 fit <- cfa(HS.model, data = HolzingerSwineford1939, meanstructure = TRUE, group = "school", ordered = "x2")
-print(parameterEstimates(fit, output = "text"), nd = 2)
-est <- parameterEstimates(fit, standardized = TRUE, rsquare = TRUE, add.attributes = TRUE, head = TRUE)
-summary(fit)
 out <- parameterEstimates_table_list(fit, remove.eq = FALSE, standardized = TRUE, ci = TRUE, rsquare = TRUE)
-print_parameterEstimates_table_list(out)
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(any(grepl("Thresholds", tmp, fixed = TRUE)))
+expect_true(any(grepl("(d2)", tmp, fixed = TRUE)))
+})
 
+test_that("EFA", {
+skip("Internal tests")
 # https://lavaan.ugent.be/tutorial/efa.html
 
 ex5_25 <- read.table("http://statmodel.com/usersguide/chap5/ex5.25.dat")
@@ -146,7 +162,13 @@ out <- parameterEstimates_table_list(est,
                                                      add_ci_sig))
 print_parameterEstimates_table_list(out,
                                     drop_cols = "Std.lv")
+})
 
+test_that("semlbci", {
+skip_on_cran()
+if (isFALSE(requireNamespace("semlbci", quietly = TRUE))) {
+    skip("semlbci not installed")
+  }
 library(semlbci)
 library(lavaan)
 mod <-
@@ -161,7 +183,8 @@ p_table
 lbci_med <- semlbci(fit_med,
                     pars = c("m ~ x",
                              "y ~ m",
-                             "ab :="))
+                             "ab :="),
+                    use_pbapply = FALSE)
 lbci_med
 
 print(lbci_med, sem_out = fit_med, output = "text")
@@ -169,13 +192,13 @@ print(lbci_med, sem_out = fit_med, output = "text")
 status_to_str <- function(object) {
     tmp <- object$post_check_lb
     if (!is.null(tmp)) {
-        tmp <- ifelse(tmp, "OK", "Not OK")
+        tmp <- ifelse(tmp, "OX", "Not OK")
         tmp[is.na(tmp)] <- ""
         object$post_check_lb <- tmp
       }
     tmp <- object$post_check_ub
     if (!is.null(tmp)) {
-        tmp <- ifelse(tmp, "OK", "Not OK")
+        tmp <- ifelse(tmp, "OX", "Not OK")
         tmp[is.na(tmp)] <- ""
         object$post_check_ub <- tmp
       }
@@ -197,10 +220,19 @@ out <- parameterEstimates_table_list(lbci_med,
                                                      "ci_org_ub" = "Org_ub",
                                                      "lbci_lb" = "LB_lb",
                                                      "lbci_ub" = "LB_ub"),
-                                     est_FUNs = list(status_to_str))
-print_parameterEstimates_table_list(out,
-                                    na_str = "--")
+                                     est_funs = list(status_to_str))
+tmp <- capture.output(print_parameterEstimates_table_list(out,
+                                                          na_str = "--"))
+expect_true(any(grepl("LB_lb", tmp)))
+expect_true(any(grepl("OX", tmp)))
+expect_false(any(grepl("status_ub", tmp)))
+})
 
+test_that("semlrtp", {
+skip_on_cran()
+if (isFALSE(requireNamespace("semlrtp", quietly = TRUE))) {
+    skip("semlrtp not installed")
+  }
 library(semlrtp)
 library(lavaan)
 data(data_sem16)
@@ -215,10 +247,7 @@ f3 ~ f1 + f2
 f4 ~ f3
 "
 fit <- sem(mod, data_sem16)
-fit_lrtp <- lrtp(fit)
-fit_lrtp
-
-
+fit_lrtp <- lrtp(fit, progress = FALSE)
 
 semlrtp_test_footer <- function(x) {
     # A test header
@@ -257,27 +286,49 @@ out <- parameterEstimates_table_list(fit_lrtp,
                                                    "LRT_ok",
                                                    "post_check_ok",
                                                    "LRT_id"),
+                                     fit_object = fit,
                                      rename_cols = c(converge_ok = "New_OK"),
-                                     est_FUNs = list(add_sig),
-                                     header_FUNs = semlrtp_test_footer2,
-                                     footer_FUNs = list(semlrtp_test_footer,
+                                     est_funs = list(add_sig),
+                                     header_funs = semlrtp_test_footer2,
+                                     footer_funs = list(semlrtp_test_footer,
                                                         semlrtp_test_footer2))
 
-print_parameterEstimates_table_list(out,
-                                    drop_cols = c("LRT", "converge_ok"),
-                                    na_str = "...")
+tmp <- capture.output(print_parameterEstimates_table_list(out,
+                                                          drop_cols = c("LRT", "converge_ok"),
+                                                          na_str = "..."))
+expect_true(any(grepl("Note:", tmp, fixed = TRUE)))
+expect_true(any(grepl("A long note", tmp, fixed = TRUE)))
+expect_false(any(grepl("converged_ok", tmp, fixed = TRUE)))
+})
 
-
-
-
-
-fit_boot <- sem(mod, data_sem16, se = "bootstrap", bootstrap = 100, iseed = 1234)
-
+test_that("semhelpinghands", {
+skip_on_cran()
+if (isFALSE(requireNamespace("semhelpinghands", quietly = TRUE))) {
+    skip("semhelpinghands not installed")
+  }
+if (isFALSE(requireNamespace("semlrtp", quietly = TRUE))) {
+    skip("semlrtp not installed")
+  }
+library(lavaan)
 library(semhelpinghands)
+library(semlrtp)
+mod <-
+"
+f1 =~ x1 + x2 + x3
+f2 =~ x4 + x5 + x6
+f3 =~ x7 + x8 + x9
+f4 =~ x10 + x11 + x12
+f2 ~~ f1
+f3 ~ f1 + f2
+f4 ~ f3
+"
+fit_boot <- sem(mod, data_sem16, se = "bootstrap", bootstrap = 50, iseed = 1234,
+                warn = FALSE)
 est <- standardizedSolution_boot_ci(fit_boot)
 
-add_ci_sig_boot <- . %>% add_ci_sig(ci.lower = "boot.ci.lower",
-                                    ci.upper = "boot.ci.upper")
+add_ci_sig_boot <- function(x) {add_ci_sig(x,
+                                           ci.lower = "boot.ci.lower",
+                                           ci.upper = "boot.ci.upper")}
 
 fix_std_attributes <- function(object) {
     out1 <- attr(object, "pe_attrib")
@@ -295,6 +346,7 @@ fix_std_attributes <- function(object) {
 est <- fix_std_attributes(est)
 names(attributes(est))
 out <- parameterEstimates_table_list(est,
+                                     fit_object = fit_boot,
                                      drop_cols = c("ci.lower",
                                                    "ci.upper",
                                                    "boot.se",
@@ -304,5 +356,7 @@ out <- parameterEstimates_table_list(est,
                                      rename_cols = c("boot.ci.lower" = "BootCI.Lo",
                                                      "boot.ci.upper" = "BootCI.Up",
                                                      "est.std" = "Standardized"),
-                                     est_FUNs = add_ci_sig_boot)
-print_parameterEstimates_table_list(out)
+                                     est_funs = add_ci_sig_boot)
+expect_output(print_parameterEstimates_table_list(out),
+              "Sig.")
+})
