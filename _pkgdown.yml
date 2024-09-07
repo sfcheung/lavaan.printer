@@ -1,0 +1,27 @@
+destination: docs
+
+template:
+  bootstrap: 5
+  bootswatch: cerulean
+  theme: a11y-light
+  bslib:
+    # pkgdown-nav-height: 100px
+    bg: "#EFEFEF"
+    fg: "#000000"
+    # primary: "#0051A8"
+    link-color: "#0000A0"
+    base_font: {google: "Cabin"}
+    heading_font: {google: "Cabin"}
+    code_font: {google: "Cousine"}
+  includes:
+    in_header: <meta name="google-site-verification" content="0VLBmFnW_UJFI-7gXnORPBsWxqZwmzuGpK-TeVRLBjQ" />
+figures:
+  fig.width: 6
+  fig.height: 4
+  fig.asp: 0.75
+
+navbar:
+  bg: primary
+  structure:
+    left:  [intro, articles, reference, tutorials, news]
+    right: [search, github]
