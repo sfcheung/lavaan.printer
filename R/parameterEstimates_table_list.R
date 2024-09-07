@@ -301,6 +301,9 @@ parameterEstimates_table_list <- function(object,
                                           est_funs_args = NULL,
                                           header_funs_args = NULL,
                                           footer_funs_args = NULL) {
+
+    # --- Check *_funs and *_fun_args
+
     if (!is.list(est_funs)) {
         # Assume one single function
         est_funs <- list(est_funs)
@@ -350,6 +353,7 @@ parameterEstimates_table_list <- function(object,
         stop("footer_funs_args must be a 'list of list()'")
       }
 
+    # --- Check object
 
     if (is.data.frame(object)) {
         # Assume it is a parameter estimates table.
@@ -365,7 +369,7 @@ parameterEstimates_table_list <- function(object,
         est_df <- as.data.frame(object)
       } else if (inherits(object, "lavaan")) {
         # If the object is a lavaan object,
-        # then it can only use attributes available from lavaan.
+        # then only use attributes available from lavaan are used.
         args0 <- list(...)
         args <- utils::modifyList(args0,
                                   list(header = TRUE,
@@ -376,14 +380,16 @@ parameterEstimates_table_list <- function(object,
         est_df <- as.data.frame(est)
       }
 
-    # For add_dots
+    # --- Identify variables with error terms
+    #
     # Use the undocumented trick of using lavNames on
     # the estimates table.
     endo <- unique(c(lavaan::lavNames(est_df, "eqs.y"),
                      lavaan::lavNames(est_df, "ov.ind"),
                      lavaan::lavNames(est_df, "lv.ind")))
 
-    # ngroups
+    # --- Grouping
+
     if (is.null(est_df$group)) {
         group_ids <- 1
         ngroups <- 1
@@ -395,7 +401,12 @@ parameterEstimates_table_list <- function(object,
         group_labels <- group_labels_from_est(est_df)
       }
 
-    # nlevels
+
+    # --- Multilevel?
+
+    # Always add the `level` column
+    # TODO: Not ready
+
     if (is.null(est_df$levels)) {
         est_df$level <- 1
         nlevels <- 1
@@ -403,10 +414,15 @@ parameterEstimates_table_list <- function(object,
         nlevels <- length(levels_from_est(est_df))
       }
 
-    # nblocks
+    # --- Blocks?
+
+    # Always add the `block` column
+
     if (is.null(est_df$block)) {
         est_df$block <- 1
       }
+
+    # --- Tables for group-level parameters in lavaan
 
     # Adapted from lavaan
     group_sections <- c(
@@ -422,10 +438,14 @@ parameterEstimates_table_list <- function(object,
         "R-Squares"
       )
 
+    # --- Tables for model-level parameters in lavaan
+
     model_sections <- c(
         "Defined Parameters",
         "Constraints"
       )
+
+    # --- Generate the group-level tables
 
     # Loop over sections
     out_group <- lapply(seq_len(ngroups),
@@ -444,6 +464,8 @@ parameterEstimates_table_list <- function(object,
         names(out_group) <- group_labels
       }
 
+    # --- Generate the model-level tables
+
     out_model <- sapply(model_sections,
                         to_tables_per_group,
                         est_df = est_df,
@@ -456,15 +478,21 @@ parameterEstimates_table_list <- function(object,
                         FUNs = est_funs,
                         simplify = FALSE)
 
+    # --- Add the header section(s)
+
     out_header <- add_header(est,
                              FUNs = c(header_funs,
                                       list(add_header_lavaan)),
                              args = c(header_funs_args,
                                       list(list())))
 
+    # --- Add the footer section(s)
+
     out_footer <- add_header(est,
                              FUNs = footer_funs,
                              args = footer_funs_args)
+
+    # --- Finalize the output
 
     out <- list(group = out_group,
                 model = out_model,
