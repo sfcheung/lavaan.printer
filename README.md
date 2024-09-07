@@ -6,9 +6,9 @@
 [![R-CMD-check](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-(Version 0.0.0.9001, updated on 2024-09-07, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
+(Version 0.0.0.9002, updated on 2024-09-07, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
 
-# pkgname: `lavaan.printer`
+# `lavaan.printer`: Customize Printout of `lavaan` Parameter Estimates
 
 This package includes helper functions
 for developers to customize the printout
