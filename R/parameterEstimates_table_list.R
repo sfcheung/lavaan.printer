@@ -378,7 +378,11 @@ parameterEstimates_table_list <- function(object,
                       c(list(object = object),
                         args))
         est_df <- as.data.frame(est)
+      } else {
+        stop("Only data-frame-like objects or lavaan objects are supported.")
       }
+
+    check_parameterEstimates_table(object)
 
     # --- Identify variables with error terms
     #

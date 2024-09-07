@@ -437,9 +437,19 @@ pad_white <- function(y,
 #' @noRd
 # Check whether an object is supported by parameterEstimates_table_list()
 check_parameterEstimates_table <- function(object) {
-    ptable <- lavaan::parameterTable(object)
-    if (lavaan::inspect(object, "nlevels") > 1) {
-        stop("Multilevel models are not supported.")
+    # object must be a data frame or a lavaan object
+    if (inherits(object, "lavaan")) {
+        if (lavaan::inspect(object, "nlevels") > 1) {
+            stop("Multilevel models are not supported.")
+          }
+      } else if (is.data.frame(object)) {
+        if (!is.null(object$level)) {
+            if (max(object$level, na.rm = TRUE) > 1) {
+                stop("Multilevel models are not supported.")
+              }
+          }
+      } else {
+        stop("Only data-frame-like objects or lavaan objects supported.")
       }
     TRUE
   }
