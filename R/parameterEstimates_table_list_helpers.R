@@ -363,7 +363,7 @@ print_header <- function(xx) {
         ptmp <- utils::modifyList(ptmp1,
                                   ptmp2)
       }
-    tmp <- capture.output(do.call(methods::getFunction(pfun), ptmp))
+    tmp <- utils::capture.output(do.call(methods::getFunction(pfun), ptmp))
     cat("\n", attr(xx, "section_title"), "\n", sep = "")
     cat(tmp, sep = "\n")
     invisible(NULL)

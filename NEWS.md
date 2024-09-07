@@ -1,3 +1,3 @@
-# lavaan.printer (development version)
+# lavaan.printer 0.0.0.9000
 
 * Initial CRAN submission.

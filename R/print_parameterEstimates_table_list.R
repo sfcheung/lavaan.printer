@@ -150,7 +150,7 @@ print_parameterEstimates_table_list <- function(x,
           }
         colnames(xx1)[colnames(xx1) == "Par"] <- ""
         # Prevent overriding the printing of a data frame
-        tmp <- capture.output(print(xx1,
+        tmp <- utils::capture.output(print(xx1,
                                     row.names = FALSE))
         cat(tmp, sep = "\n")
       }
@@ -171,7 +171,7 @@ print_parameterEstimates_table_list <- function(x,
                              max_width = num_max_width["Par"],
                              where = "right")
         colnames(xx1)[colnames(xx1) == "Par"] <- ""
-        tmp <- capture.output(print(xx1,
+        tmp <- utils::capture.output(print(xx1,
                                     row.names = FALSE))
         cat("\n", "Constraints:", "\n", sep = "")
         cat(tmp, sep = "\n")

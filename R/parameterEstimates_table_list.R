@@ -26,7 +26,7 @@
 #' @description Create a list of data
 #' frames from the output of
 #' [lavaan::parameterEstimates()],
-#' formatting in nearly the same way the
+#' formatted in nearly the same way the
 #' argument `output = "text"` does.
 #'
 #' @details This function creates an
@@ -40,7 +40,7 @@
 #' [lavaan::parameterEstimates()]. It
 #' does not format the content. The
 #' actual printing is to be done by
-#' [parameterEstimates_table_list()],
+#' [print_parameterEstimates_table_list()],
 #' which will format the cells before
 #' printing them.
 #'
@@ -51,11 +51,11 @@
 #' that add columns to the parameter
 #' estimates table of a `lavaan` object
 #' can use it and
-#' [parameterEstimates_table_list()]
+#' [PRINT_parameterEstimates_table_list()]
 #' to print the output in the
 #' `lavaan`-style, but with columns
 #' modified as needed and with additional
-#' header and/or footer sections.
+#' header and/or footer sections added.
 #'
 #' Therefore, it was developed with
 #' flexibility in mind, at the expense
@@ -65,12 +65,12 @@
 #'
 #' If a list of functions
 #' is supplied to `header_funs` or
-#' `footer_funs`, they will be uesd
+#' `footer_funs`, they will be used
 #' to generate the headers and/or
 #' footers. The input is `object`, or
-#' the parameter estiamtes table
+#' the parameter estimates table
 #' generated from object. The output
-#' should be one one of the following
+#' should be one of the following
 #' formats.
 #'
 #' It can be a data frame with two
@@ -102,7 +102,7 @@
 #' `cat(x, sep = "\n")`, `x`` being the
 #' character vector.
 #'
-#' These two arguments allows users
+#' These two arguments allows users to
 #' add header and footer sections and
 #' print them in the desired format.
 #'
@@ -114,11 +114,27 @@
 #' with this
 #' structure.
 #'
+#' - `group`: A list of data frames for
+#'  each group. It is a list of length
+#'  equal to one if the model has only
+#'  one group. For each group, the
+#'  content is a list of data frames,
+#'  one for each section of the estimates.
+#'
+#'  - `model`: A list of tables for
+#'  sections such as user-defined
+#'  parameters (`"Defined Parameters"`)
+#'  or model constraints (`"Constraints"`).
+#'
+#'  - `header`: A list of header sections.
+#'
+#'  - `footer`: A list of footer sections.
+#'
 #' @param object It can a data frame
 #' similar in form to the output of
 #' [lavaan::parameterEstimates()], or a
 #' `lavaan` object (e.g., the output of
-#' [lavann:sem()]). If it is a `lavaan`
+#' [lavaan::sem()]). If it is a `lavaan`
 #' object, then
 #' [lavaan::parameterEstimates()] will
 #' be called to generate the parameter
@@ -140,7 +156,7 @@
 #' when setting `output` to `"text"`.
 #'
 #' @param se_also_to_na Columns for
-#' which cells will be set to `NA` is
+#' which cells will be set to `NA` if
 #' the standard error of a parameter is
 #' zero, which is assumed to mean that
 #' this parameter is fixed. By default,
@@ -148,10 +164,12 @@
 #' need to specify them for this
 #' argument: `"z"`, `"pvalue"`, `"t"`,
 #' `"df"`, `"ci.lower"`, and
-#' `"ci.upper"`.
+#' `"ci.upper"`. To exclude one of these
+#' columns from `se_als_to_na`, add it
+#' to `se_not_to_na`.
 #'
 #' @param se_not_to_na Columns for which
-#' cells will *not* set to `NA` even if
+#' cells will *not* be set to `NA` even if
 #' the standard error of a parameter is
 #' zero. Column names that appear here
 #' *override* `se_also_to_na`.
@@ -161,7 +179,7 @@
 #' argument, they will also not be set
 #' to `NA`.
 #'
-#' @param drop_cols Names of columns to
+#' @param drop_cols The names of columns to
 #' be dropped.
 #'
 #' @param rename_cols If any columns are
@@ -170,7 +188,7 @@
 #' being the original names and the
 #' values being the new names. For
 #' example, `c("pvalue" = "P(|>z|)")`
-#' rename the column `"pvalue"` to
+#' renames the column `"pvalue"` to
 #' `"P(|z|)"`. It is recommended to
 #' quote the names too because they may
 #' not be standard names.
@@ -209,9 +227,32 @@
 #' table.
 #'
 #' @examples
-#' \donttest{
-#' }
 #'
+#' # Adapted from the help of lavaan::cfa()
+#' library(lavaan)
+#' mod <- "
+#' visual  =~ x1 + x2 + x3
+#' textual =~ x4 + x5 + x6
+#' speed   =~ x7 + x8 + x9
+#' "
+#' fit <- cfa(mod,
+#'            data = HolzingerSwineford1939)
+#' est <- parameterEstimates_table_list(fit,
+#'                                      rename_cols = c("P(>|z|)" = "pvalue",
+#'                                                      "S.E." = "SE"))
+#' print_parameterEstimates_table_list(est,
+#'                                     drop = "Z")
+#' fit2 <- cfa(mod,
+#'             data = HolzingerSwineford1939,
+#'             group = "school")
+#' est2 <- parameterEstimates_table_list(fit2)
+#' # The tables in the same group are printed together (default)
+#' print_parameterEstimates_table_list(est2,
+#'                                     by_group = TRUE)
+#' # The table are grouped by section then by group
+#' print_parameterEstimates_table_list(est2,
+#'                                     by_group = FALSE)
+
 #' @export
 
 parameterEstimates_table_list <- function(object,
@@ -246,8 +287,7 @@ parameterEstimates_table_list <- function(object,
             est <- add_header_attributes(object,
                                          fit_object)
           } else {
-            # TODO: Should be able to proceed even with out fit_object
-            stop("'fit_object' must be set to the original lavaan output if a data.frame is supplied.")
+            est <- object
           }
         est_df <- as.data.frame(object)
       } else if (inherits(object, "lavaan")) {
