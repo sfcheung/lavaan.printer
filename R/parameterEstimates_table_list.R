@@ -218,6 +218,39 @@
 #' expected format of the output of
 #' these functions.
 #'
+#' @param est_funs_args If supplied, it
+#' must be a "list of list(s)". The length
+#' of this list must be equal to the
+#' number of functions in `est_funs`.
+#' Each sub-list is the list of arguments
+#' to be used when calling a function in
+#' `est_funs`. It must be an empty
+#' `list()` if no additional arguments
+#' are to be used when calling a function
+#' in `est_funs`.
+#'
+#' @param header_funs_args If supplied, it
+#' must be a "list of list(s)". The length
+#' of this list must be equal to the
+#' number of functions in `header_funs`.
+#' Each sub-list is the list of arguments
+#' to be used when calling a function in
+#' `header_funs`. It must be an empty
+#' `list()` if no additional arguments
+#' are to be used when calling a function
+#' in `header_funs`.
+#'
+#' @param footer_funs_args If supplied, it
+#' must be a "list of list(s)". The length
+#' of this list must be equal to the
+#' number of functions in `footer_funs`.
+#' Each sub-list is the list of arguments
+#' to be used when calling a function in
+#' `footer_funs`. It must be an empty
+#' `list()` if no additional arguments
+#' are to be used when calling a function
+#' in `footer_funs`.
+#'
 #' @author Shu Fai Cheung <https://orcid.org/0000-0002-9871-9448>
 #'
 #' @seealso [print_parameterEstimates_table_list()]
@@ -264,7 +297,10 @@ parameterEstimates_table_list <- function(object,
                                           rename_cols = character(0),
                                           est_funs = list(),
                                           header_funs = list(),
-                                          footer_funs = list()) {
+                                          footer_funs = list(),
+                                          est_funs_args = NULL,
+                                          header_funs_args = NULL,
+                                          footer_funs_args = NULL) {
     if (!is.list(est_funs)) {
         # Assume one single function
         est_funs <- list(est_funs)
@@ -277,6 +313,43 @@ parameterEstimates_table_list <- function(object,
         # Assume one single function
         footer_funs <- list(footer_funs)
       }
+
+    if (is.null(est_funs_args)) {
+        est_funs_args <- replicate(length(est_funs),
+                                   list())
+      }
+
+    if (is.null(header_funs_args)) {
+        header_funs_args <- replicate(length(header_funs),
+                                   list())
+      }
+
+    if (is.null(footer_funs_args)) {
+        footer_funs_args <- replicate(length(footer_funs),
+                                   list())
+      }
+
+    if (length(est_funs_args) != length(est_funs)) {
+        stop("The length of est_funs_args does not match the length of est_funs.")
+      }
+    if (!all(sapply(est_funs_args, is.list))) {
+        stop("est_funs_args must be a 'list of list()'")
+      }
+
+    if (length(header_funs_args) != length(header_funs)) {
+        stop("The length of header_funs_args does not match the length of header_funs.")
+      }
+    if (!all(sapply(header_funs_args, is.list))) {
+        stop("header_funs_args must be a 'list of list()'")
+      }
+
+    if (length(footer_funs_args) != length(footer_funs)) {
+        stop("The length of footer_funs_args does not match the length of footer_funs.")
+      }
+    if (!all(sapply(footer_funs_args, is.list))) {
+        stop("footer_funs_args must be a 'list of list()'")
+      }
+
 
     if (is.data.frame(object)) {
         # Assume it is a parameter estimates table.
@@ -365,7 +438,8 @@ parameterEstimates_table_list <- function(object,
                         drop_cols = drop_cols,
                         rename_cols = rename_cols,
                         endo = endo,
-                        FUNs = est_funs)
+                        FUNs = est_funs,
+                        args = est_funs_args)
     if (ngroups > 1) {
         names(out_group) <- group_labels
       }

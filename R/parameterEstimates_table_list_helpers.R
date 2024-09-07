@@ -280,7 +280,8 @@ to_tables_per_group <- function(section,
                                 drop_cols = "std.nox",
                                 rename_cols = character(0),
                                 endo = character(0),
-                                FUNs = list()) {
+                                FUNs = list(),
+                                args = list(list())) {
     i_rows <- section_rows(section,
                            est_df = est_df,
                            group_id = group_id)
@@ -298,8 +299,14 @@ to_tables_per_group <- function(section,
                         not_to_na = se_not_to_na)
     # Can use user-functions to format or add columns
     if (length(FUNs) > 0) {
-        for (FUNi in FUNs) {
-            out0 <- FUNi(out0)
+        # for (FUNi in FUNs) {
+        #     out0 <- FUNi(out0)
+        #   }
+        for (i in seq_along(FUNs)) {
+            args0 <- utils::modifyList(list(out0),
+                                       args[[i]])
+            out0 <- do.call(FUNs[[i]],
+                            args0)
           }
       }
     # TODO: Support for bounds to be added later

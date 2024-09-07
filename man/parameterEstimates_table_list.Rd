@@ -17,7 +17,10 @@ parameterEstimates_table_list(
   rename_cols = character(0),
   est_funs = list(),
   header_funs = list(),
-  footer_funs = list()
+  footer_funs = list(),
+  est_funs_args = NULL,
+  header_funs_args = NULL,
+  footer_funs_args = NULL
 )
 
 print_parameterEstimates_table_list(
@@ -124,6 +127,39 @@ applied to \code{object} to generate the
 footer sections. See \code{Details} on the
 expected format of the output of
 these functions.}
+
+\item{est_funs_args}{If supplied, it
+must be a "list of list(s)". The length
+of this list must be equal to the
+number of functions in \code{est_funs}.
+Each sub-list is the list of arguments
+to be used when calling a function in
+\code{est_funs}. It must be an empty
+\code{list()} if no additional arguments
+are to be used when calling a function
+in \code{est_funs}.}
+
+\item{header_funs_args}{If supplied, it
+must be a "list of list(s)". The length
+of this list must be equal to the
+number of functions in \code{header_funs}.
+Each sub-list is the list of arguments
+to be used when calling a function in
+\code{header_funs}. It must be an empty
+\code{list()} if no additional arguments
+are to be used when calling a function
+in \code{header_funs}.}
+
+\item{footer_funs_args}{If supplied, it
+must be a "list of list(s)". The length
+of this list must be equal to the
+number of functions in \code{footer_funs}.
+Each sub-list is the list of arguments
+to be used when calling a function in
+\code{footer_funs}. It must be an empty
+\code{list()} if no additional arguments
+are to be used when calling a function
+in \code{footer_funs}.}
 
 \item{x}{The object to be printed.
 Should be the output of

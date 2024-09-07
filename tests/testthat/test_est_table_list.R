@@ -1,13 +1,16 @@
 library(testthat)
 library(lavaan.printer)
 
-add_sig <- function(object) {
-    tmp <- object$pvalue
+add_sig <- function(object,
+                    pvalue = "pvalue",
+                    breaks = c(1, .05, .01, .001, -Inf),
+                    labels = c("***", "** ", "*  ", "  ")) {
+    tmp <- object[, pvalue, drop = TRUE]
     if (!is.null(tmp)) {
         tmp[is.na(tmp)] <- 1
         tmp2 <- cut(tmp,
-                    breaks = c(1, .05, .01, .001, -Inf),
-                    labels = c("***", "** ", "*  ", "  "))
+                    breaks = breaks,
+                    labels = labels)
         i <- match("pvalue", colnames(object))
         out <- data.frame(object[, 1:i],
                           Sig = tmp2,
@@ -18,13 +21,15 @@ add_sig <- function(object) {
 
 add_ci_sig <- function(object,
                        ci.lower = "ci.lower",
-                       ci.upper = "ci.upper") {
+                       ci.upper = "ci.upper",
+                       yes = "Sig.",
+                       no = "n.s.") {
     tmp1 <- object[, ci.lower, drop = TRUE]
     tmp2 <- object[, ci.upper, drop = TRUE]
     if (!is.null(tmp1) && !is.null(tmp2)) {
         j0 <- ifelse(((tmp2 < 0) | (tmp1 > 0)),
-                     yes = "Sig.",
-                     no = "n.s.")
+                     yes = yes,
+                     no = no)
         j0[(tmp1 == tmp2)] <- ""
         j0[is.na(tmp1) | is.na(tmp2)] <- ""
         i <- match(ci.upper, colnames(object))
@@ -111,6 +116,33 @@ out <- parameterEstimates_table_list(fit2, remove.eq = FALSE, standardized = TRU
 tmp <- capture.output(print_parameterEstimates_table_list(out))
 expect_true(any(grepl(".x5 ~~", tmp, fixed = TRUE)))
 expect_true(any(grepl(" .x9", tmp, fixed = TRUE)))
+out <- parameterEstimates_table_list(fit2,
+                                     remove.eq = FALSE,
+                                     standardized = TRUE,
+                                     ci = TRUE,
+                                     rsquare = TRUE,
+                                     est_funs = list(add_sig,
+                                                     add_ci_sig))
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(any(grepl("***", tmp, fixed = TRUE)))
+expect_true(any(grepl("Sig.", tmp, fixed = TRUE)))
+out <- parameterEstimates_table_list(fit2,
+                                     remove.eq = FALSE,
+                                     standardized = TRUE,
+                                     ci = TRUE,
+                                     rsquare = TRUE,
+                                     est_funs = list(add_sig,
+                                                     add_ci_sig),
+                                     est_funs_args = list(list(),
+                                                          list(yes = "Yes",
+                                                               no = "No")))
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(any(grepl("Yes", tmp, fixed = TRUE)))
+expect_true(any(grepl("No", tmp, fixed = TRUE)))
+expect_error(parameterEstimates_table_list(fit2,
+                                           est_funs = list(add_sig,
+                                                           add_ci_sig),
+                                           est_funs_args = list(list())))
 })
 
 test_that("Multigroup CFA with equality constraints", {
@@ -307,7 +339,7 @@ if (isFALSE(requireNamespace("semlrtp", quietly = TRUE))) {
     skip("semlrtp not installed")
   }
 library(lavaan)
-library(semhelpinghands)
+suppressMessages(library(semhelpinghands))
 library(semlrtp)
 mod <-
 "
@@ -356,4 +388,25 @@ out <- parameterEstimates_table_list(est,
                                      est_funs = add_ci_sig_boot)
 expect_output(print_parameterEstimates_table_list(out),
               "Sig.")
+
+out <- parameterEstimates_table_list(est,
+                                     fit_object = fit_boot,
+                                     drop_cols = c("ci.lower",
+                                                   "ci.upper",
+                                                   "boot.se",
+                                                   "se",
+                                                   "z",
+                                                   "pvalue"),
+                                     rename_cols = c("boot.ci.lower" = "BootCI.Lo",
+                                                     "boot.ci.upper" = "BootCI.Up",
+                                                     "est.std" = "Standardized"),
+                                     est_funs = add_ci_sig,
+                                     est_funs_args = list(list(yes = "SIG.",
+                                                               no = "N.S.",
+                                                               ci.lower = "boot.ci.lower",
+                                                               ci.upper = "boot.ci.upper")))
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(any(grepl("SIG.", tmp, fixed = TRUE)))
+expect_true(any(grepl("BootCI.Up CI.Sig", tmp, fixed = TRUE)))
+expect_false(any(grepl("Sig.", tmp, fixed = TRUE)))
 })
