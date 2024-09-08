@@ -63,9 +63,6 @@ add_header_attributes <- function(object,
 add_header <- function(object,
                        FUNs = list(),
                        args = list(list())) {
-    # out0 <- lapply(FUNs,
-    #                do.call,
-    #                list(object))
     out0 <- mapply(function(fun0, args0, object0) {
                       args1 <- utils::modifyList(list(object0),
                                                  args0)
@@ -310,9 +307,6 @@ to_tables_per_group <- function(section,
                         not_to_na = se_not_to_na)
     # Can use user-functions to format or add columns
     if (length(FUNs) > 0) {
-        # for (FUNi in FUNs) {
-        #     out0 <- FUNi(out0)
-        #   }
         for (i in seq_along(FUNs)) {
             args0 <- utils::modifyList(list(out0),
                                        args[[i]])
@@ -437,9 +431,19 @@ pad_white <- function(y,
 #' @noRd
 # Check whether an object is supported by parameterEstimates_table_list()
 check_parameterEstimates_table <- function(object) {
-    ptable <- lavaan::parameterTable(object)
-    if (lavaan::inspect(object, "nlevels") > 1) {
-        stop("Multilevel models are not supported.")
+    # object must be a data frame or a lavaan object
+    if (inherits(object, "lavaan")) {
+        if (lavaan::inspect(object, "nlevels") > 1) {
+            stop("Multilevel models are not supported.")
+          }
+      } else if (is.data.frame(object)) {
+        if (!is.null(object$level)) {
+            if (max(object$level, na.rm = TRUE) > 1) {
+                stop("Multilevel models are not supported.")
+              }
+          }
+      } else {
+        stop("Only data-frame-like objects or lavaan objects supported.")
       }
     TRUE
   }

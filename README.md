@@ -6,7 +6,7 @@
 [![R-CMD-check](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-(Version 0.0.0.9002, updated on 2024-09-07, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
+(Version 0.0.0.9003, updated on 2024-09-08, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
 
 # `lavaan.printer`: Customize Printout of `lavaan` Parameter Estimates
 
@@ -15,7 +15,7 @@ for developers to customize the printout
 of the parameter estimates in the output
 of `lavaan`. These functions emphasize
 flexibility, not user-friendliness. They
-are not intender for end-users.
+are not intended for end-users.
 
 For more information on this package,
 please visit its GitHub page:
@@ -24,9 +24,12 @@ https://sfcheung.github.io/lavaan.printer/
 
 # Installation
 
-This package is still under development.
+The latest developmental version of this
+package can be installed by `remotes::install_github`:
 
-Do not install it for now.
+```r
+remotes::install_github("sfcheung/lavaan.printer")
+```
 
 # Issues
 
