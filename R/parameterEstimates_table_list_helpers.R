@@ -376,6 +376,12 @@ print_header <- function(xx) {
                                   ptmp2)
       }
     tmp <- utils::capture.output(do.call(methods::getFunction(pfun), ptmp))
+    # TODO: Add strwrap options here.
+    # TODO: Retrieve the attribute 'strwrap_args'
+    # ptmp3 <- attr(xx, "strwrap_args")
+    # ptmp3 <- utils::modifyList(list(x = tmp),
+    #                            ptmp3)
+    # TODO: Example: tmp <- do.call(strwrap, ptmp3)
     cat("\n", attr(xx, "section_title"), "\n", sep = "")
     cat(tmp, sep = "\n")
     invisible(NULL)
