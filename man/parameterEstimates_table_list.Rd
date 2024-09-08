@@ -299,6 +299,11 @@ add header and footer sections and
 print them in the desired format.
 }
 }
+\section{Limitations}{
+These function do not yet support
+multilevel models.
+}
+
 \examples{
 
 # Adapted from the help of lavaan::cfa()
@@ -325,6 +330,26 @@ print_parameterEstimates_table_list(est2,
 # The table are grouped by section then by group
 print_parameterEstimates_table_list(est2,
                                     by_group = FALSE)
+
+# A simple function to add "***" for parameters with p-values < .001
+add_sig <- function(object,
+                    pvalue = "pvalue") {
+    tmp <- object[, pvalue, drop = TRUE]
+    if (!is.null(tmp)) {
+        tmp[is.na(tmp)] <- 1
+        tmp2 <- ifelse(tmp < .001, "***", "")
+        i <- match("pvalue", colnames(object))
+        out <- data.frame(object[, 1:i],
+                          Sig = tmp2,
+                          object[, seq(i + 1, ncol(object))])
+      }
+    out
+  }
+
+est3 <- parameterEstimates_table_list(fit2,
+                                      est_funs = list(add_sig))
+print_parameterEstimates_table_list(est3)
+
 }
 \seealso{
 \code{\link[=print_parameterEstimates_table_list]{print_parameterEstimates_table_list()}}
