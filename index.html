@@ -13,8 +13,8 @@
 <link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Helper Functions For Printing lavaan Outputs">
-<meta name="description" content="Helpers for customizing the outputs the selected outputs from lavaan by Rosseel (2012) &lt;doi:10.18637/jss.v048.i02&gt; and print them. The Functions are intended to be used by package developer and so is not designed to be user-friendly. They are designed to be customizable.">
-<meta property="og:description" content="Helpers for customizing the outputs the selected outputs from lavaan by Rosseel (2012) &lt;doi:10.18637/jss.v048.i02&gt; and print them. The Functions are intended to be used by package developer and so is not designed to be user-friendly. They are designed to be customizable.">
+<meta name="description" content="Helpers for customizing selected outputs from lavaan by Rosseel (2012) &lt;doi:10.18637/jss.v048.i02&gt; and print them. The functions are intended to be used by package developers in their packages and so are not designed to be user-friendly. They are designed to be customizable.">
+<meta property="og:description" content="Helpers for customizing selected outputs from lavaan by Rosseel (2012) &lt;doi:10.18637/jss.v048.i02&gt; and print them. The functions are intended to be used by package developers in their packages and so are not designed to be user-friendly. They are designed to be customizable.">
 <meta name="google-site-verification" content="0VLBmFnW_UJFI-7gXnORPBsWxqZwmzuGpK-TeVRLBjQ">
 </head>
 <body>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">lavaan.printer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,20 +49,21 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p>(Version 0.0.0.9002, updated on 2024-09-07, <a href="https://sfcheung.github.io/lavaan.printer/news/index.html" class="external-link">release history</a>)</p>
+<p>(Version 0.0.0.9003, updated on 2024-09-08, <a href="https://sfcheung.github.io/lavaan.printer/news/index.html" class="external-link">release history</a>)</p>
 <div class="section level1">
 <div class="page-header"><h1 id="lavaanprinter-customize-printout-of-lavaan-parameter-estimates">
 <code>lavaan.printer</code>: Customize Printout of <code>lavaan</code> Parameter Estimates<a class="anchor" aria-label="anchor" href="#lavaanprinter-customize-printout-of-lavaan-parameter-estimates"></a>
 </h1></div>
-<p>This package includes helper functions for developers to customize the printout of the parameter estimates in the output of <code>lavaan</code>. These functions emphasize flexibility, not user-friendliness. They are not intender for end-users.</p>
+<p>This package includes helper functions for developers to customize the printout of the parameter estimates in the output of <code>lavaan</code>. These functions emphasize flexibility, not user-friendliness. They are not intended for end-users.</p>
 <p>For more information on this package, please visit its GitHub page:</p>
 <p><a href="https://sfcheung.github.io/lavaan.printer/" class="external-link uri">https://sfcheung.github.io/lavaan.printer/</a></p>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h1>
-<p>This package is still under development.</p>
-<p>Do not install it for now.</p>
+<p>The latest developmental version of this package can be installed by <code>remotes::install_github</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sfcheung/lavaan.printer"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="issues">Issues<a class="anchor" aria-label="anchor" href="#issues"></a>
