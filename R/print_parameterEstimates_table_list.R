@@ -55,7 +55,8 @@ print_parameterEstimates_table_list <- function(x,
     out_model <- x$model
     out_footer <- x$footer
 
-    # Print headers
+    # --- Print headers
+
     if (length(out_header) > 0) {
         for (xx in out_header) {
             if (isTRUE(nrow(xx) == 0) || is.null(xx)) next
@@ -63,7 +64,8 @@ print_parameterEstimates_table_list <- function(x,
           }
       }
 
-    # Order tables based on by_group
+    # ---Order tables based on by_group
+
     ngroups <- length(out_group)
     if (by_group) {
         out0 <- unlist(out_group,
@@ -78,11 +80,12 @@ print_parameterEstimates_table_list <- function(x,
                        recursive = FALSE)
       }
 
-    # Handle constraints separately
+    # -- Handle constraints separately
+
     out1 <- c(out0, out_model["Defined Parameters"])
     out1 <- out1[!sapply(out1, is.null)]
 
-    # Format all columns first
+    # -- Format all columns
 
     xx_original_names <- out1[[1]]
     for (xx in seq_along(out1)) {
@@ -100,13 +103,18 @@ print_parameterEstimates_table_list <- function(x,
                                 na_str = na_str)
         out1[[xx]] <- yy
       }
-    # Find the maximum column width of each column
+
+    # -- Find the maximum column width of each column
+
+    # For standardizing the column widths across sections
+
     tmp1 <- do.call(rbind, out1)
     num_max_width <- apply(tmp1,
                            MARGIN = 2,
                            FUN = function(xx) max(nchar(xx), nd, na.rm = TRUE))
 
-    # Print each section
+    # -- Print each section
+
     for (xx in out1) {
         xx_section <- attr(xx, "section")
         xx_category <- attr(xx, "category")
@@ -155,7 +163,8 @@ print_parameterEstimates_table_list <- function(x,
         cat(tmp, sep = "\n")
       }
 
-    # Print constraints
+    # -- Print constraints
+
     out_con <- out_model$Constraints
     if (!is.null(out_con)) {
         xx1 <- format_numeric_cols(out_con,
@@ -177,7 +186,8 @@ print_parameterEstimates_table_list <- function(x,
         cat(tmp, sep = "\n")
       }
 
-    # Print footers
+    # -- Print footers
+
     if (length(out_footer) > 0) {
         for (xx in out_footer) {
             if (isTRUE(nrow(xx) == 0) || is.null(xx)) next
