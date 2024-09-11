@@ -45,7 +45,7 @@
 #' printing them.
 #'
 #' This function is not intended to be
-#' used by end users. It is intended
+#' used by end-users. It is intended
 #' to be used inside other functions,
 #' such as a print method. Functions
 #' that add columns to the parameter
@@ -163,6 +163,16 @@
 #'  - `header`: A list of header sections.
 #'
 #'  - `footer`: A list of footer sections.
+#'
+#' The decision of not having a `print`
+#' method is intentional. It is intended
+#' to be used by other
+#' the `print` methods of other classes,
+#' to create the formatted list of
+#' tables,
+#' and then print it by calling
+#' [print_parameterEstimates_table_list()]
+#' internally.
 #'
 #' @param object It can a data frame
 #' similar in form to the output of
@@ -327,7 +337,7 @@
 #'     if (!is.null(tmp)) {
 #'         tmp[is.na(tmp)] <- 1
 #'         tmp2 <- ifelse(tmp < .001, "***", "")
-#'         i <- match("pvalue", colnames(object))
+#'         i <- match(pvalue, colnames(object))
 #'         out <- data.frame(object[, 1:i],
 #'                           Sig = tmp2,
 #'                           object[, seq(i + 1, ncol(object))])
