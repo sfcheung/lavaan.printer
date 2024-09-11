@@ -26,7 +26,7 @@ Imports:
     methods,
     lavaan
 Depends:
-    R (>= 4.0.0)
+    R (>= 4.4.0)
 Config/testthat/edition: 3
 URL: https://sfcheung.github.io/lavaan.printer/
 VignetteBuilder: knitr
