@@ -15,7 +15,7 @@ argument output = "text" does.'><meta name="google-site-verification" content="0
 
     <a class="navbar-brand me-2" href="../index.html">lavaan.printer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9004</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -365,11 +365,25 @@ attribute <code>print_fun</code> and set it to
 <code>"cat"</code>, the name of the function
 to be used to print the section,
 and add the attribute <code>print_args</code>
-and set it to <code>list(sep = "\n")</code>.
-They will then be printed by
-<code>cat(x, sep = "\n")</code>, `x“ being the
-character vector.</p>
-<p>These two arguments allows users to
+and set it to be a named list of
+arguments to be passed to <code>print_fun</code>.</p>
+<p>Special treatment when <code>print-fun</code>
+is "cat"`:</p><ul><li><p>The default of <code>sep</code>
+is <code>"\n"</code>. To override this default,
+set the attribute <code>print_args</code> and
+set <code>sep</code> to something else.</p></li>
+<li><p>Each element in the object, which
+should be a character vector, is
+processed by <code><a href="https://rdrr.io/r/base/strwrap.html" class="external-link">strwrap()</a></code> by default.
+Additional arguments to <code><a href="https://rdrr.io/r/base/strwrap.html" class="external-link">strwrap()</a></code>
+can be passed by setting the attribute
+<code>strwrap_args</code> to a named list of
+the arguments for <code><a href="https://rdrr.io/r/base/strwrap.html" class="external-link">strwrap()</a></code> (e.g.,
+<code>list(exdent = 2)</code>). To disable
+this feature, set the attribute
+<code>wrap_lines</code> to <code>FALSE</code>.</p></li>
+</ul><p>These arguments <code>header_funs</code>
+and <code>footer_args</code> allow users to
 add header and footer sections and
 print them in the desired format.</p>
 </div>
