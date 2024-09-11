@@ -1,6 +1,6 @@
 Package: lavaan.printer
 Title: Helper Functions For Printing 'lavaan' Outputs
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R:
     c(person(given = "Shu Fai",
              family = "Cheung",
@@ -16,7 +16,7 @@ Description: Helpers for customizing selected outputs from
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests:
     testthat (>= 3.0.0)
 Imports:
