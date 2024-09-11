@@ -97,12 +97,30 @@
 #' `"cat"`, the name of the function
 #' to be used to print the section,
 #' and add the attribute `print_args`
-#' and set it to `list(sep = "\n")`.
-#' They will then be printed by
-#' `cat(x, sep = "\n")`, `x`` being the
-#' character vector.
+#' and set it to be a named list of
+#' arguments to be passed to `print_fun`.
 #'
-#' These two arguments allows users to
+#' Special treatment when `print-fun`
+#' is "cat"`:
+#'
+#' - The default of `sep`
+#' is `"\n"`. To override this default,
+#' set the attribute `print_args` and
+#' set `sep` to something else.
+#'
+#' - Each element in the object, which
+#' should be a character vector, is
+#' processed by [strwrap()] by default.
+#' Additional arguments to [strwrap()]
+#' can be passed by setting the attribute
+#' `strwrap_args` to a named list of
+#' the arguments for [strwrap()] (e.g.,
+#'  `list(exdent = 2)`). To disable
+#' this feature, set the attribute
+#' `wrap_lines` to `FALSE`.
+#'
+#' These arguments `header_funs`
+#' and `footer_args` allow users to
 #' add header and footer sections and
 #' print them in the desired format.
 #'

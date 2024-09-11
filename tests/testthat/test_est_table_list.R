@@ -200,7 +200,6 @@ test_section <- function(x,
                          arg1 = "field:",
                          arg2 = "value",
                          section_name = "Section Name:") {
-    # A test header
     out0 <- list(field = character(0),
                  val = character(0))
     out0$field <- c(out0$field,
@@ -241,5 +240,64 @@ expect_true(any(grepl("Header 2::", tmp, fixed = TRUE)))
 expect_true(any(grepl("CI.Sig", tmp, fixed = TRUE)))
 expect_true(any(grepl("*", tmp, fixed = TRUE)))
 expect_true(any(grepl("n.s.", tmp, fixed = TRUE)))
+
+# strwrap
+
+test_section_note <- function(x,
+                              notes = "- Note 1",
+                              section_name = "Notes:",
+                              strwrap_args = list(),
+                              wrap_lines = TRUE) {
+    attr(notes, "print_fun") <- "cat"
+    attr(notes, "strwrap_args") <- strwrap_args
+    attr(notes, "section_title") <- section_name
+    attr(notes, "wrap_lines") <- wrap_lines
+    notes
+  }
+
+out <- parameterEstimates_table_list(fit,
+                                     est_funs = list(add_ci_sig,
+                                                     add_sig),
+                                     header_funs = list(test_section,
+                                                        test_section_note),
+                                     est_funs_args = list(list(yes = "YES", no = "NO"),
+                                                          list(breaks = c(1, .05, -Inf),
+                                                               labels = c("*", "n.s."))),
+                                     header_funs_args = list(list(section_name = "Header 1:"),
+                                                             list(section_name = "Header Note",
+                                                                  notes = c("- 1: This is a very very long sentence for testing strwrap with in printing a header. It should be wrapped when printed",
+                                                                           "- 2: This is a very very long sentence for testing strwrap with in printing a header. It should be wrapped when printed"))),
+                                     footer_funs = list(test_section,
+                                                        test_section_note,
+                                                        test_section),
+                                     footer_funs_args = list(list(),
+                                                             list(notes = c("> Note 1: This is a very very long sentence for testing strwrap with in printing a header. It should be wrapped when printed",
+                                                                           "> Note 2: This is a very very long sentence for testing strwrap with in printing a header. It should be wrapped when printed"),
+                                                                  section_name = "Footer Note:",
+                                                                  strwrap_args = list(exdent = 2)),
+                                                             list()))
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(any(grepl("Footer Note:", tmp, fixed = TRUE)))
+expect_true(max(sapply(tmp, nchar)) < 80)
+
+out <- parameterEstimates_table_list(fit,
+                                     est_funs = list(add_ci_sig,
+                                                     add_sig),
+                                     header_funs = list(test_section),
+                                     est_funs_args = list(list(yes = "YES", no = "NO"),
+                                                          list(breaks = c(1, .05, -Inf),
+                                                               labels = c("*", "n.s."))),
+                                     header_funs_args = list(list(section_name = "Header 1:")),
+                                     footer_funs = list(test_section,
+                                                        test_section_note,
+                                                        test_section),
+                                     footer_funs_args = list(list(),
+                                                             list(notes = c("> Note 1: This is a very very long sentence for testing strwrap with in printing a header. It should be wrapped when printed",
+                                                                           "> Note 2: This is a very very long sentence for testing strwrap with in printing a header. It should be wrapped when printed"),
+                                                                  section_name = "Footer Note:",
+                                                                  wrap_lines = FALSE),
+                                                             list()))
+tmp <- capture.output(print_parameterEstimates_table_list(out))
+expect_true(max(sapply(tmp, nchar)) > 80)
 })
 
