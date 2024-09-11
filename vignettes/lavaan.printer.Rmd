@@ -1,0 +1,274 @@
+---
+title: "lavaan.printer"
+author: "Shu Fai Cheung"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{lavaan.printer}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Introduction
+
+This article illustrate how to use
+the two main functions of `lavaan.printer`:
+`parameterEstimates_table_list()` and
+`print_parameterEstimates_table_list()`.
+
+These are the packages used in this
+article:
+
+```{r}
+library(lavaan)
+library(lavaan.printer)
+```
+
+# For What Scenarios?
+
+These two functions are not for end-users.
+They are for package developers, and are
+intended to be used internally by
+`print`-methods or similar functions for
+the objects in these packages.
+
+- `parameterEstimates_table_list()`:
+  creates a `parameterEstimates_table_list`
+  object which is a list of data frames,
+  organized based on the output for
+  parameter estimates in the `summary()`
+  output of `lavaan`. The data frames
+  can be customized in a lot of ways,
+  such as adding or deleting columns
+  created by user-supplied functions or
+  adding header sections or footer
+  sections.
+
+- `print_parameterEstimates_table_list()`:
+  It prints a `parameterEstimates_table_list`
+  object, with some degree of customization.
+  Most of the customization is done when
+  calling `parameterEstimates_table_list()`.
+
+# Scenarios
+
+## Just Create a List of Data frames
+
+In the simplest case, `parameterEstimates_table_list()`
+can bee used to generate the usual parameter
+estimates results of `lavaan`, but as
+a list of data frames. Arguments for
+to `lavaan::parameterEstimates()` can
+be used when calling
+`parameterEstimates_table_list()`:
+
+```{r}
+# Adapted from the example of cfa()
+model_cfa <- "visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6"
+fit <- cfa(model_cfa,
+           data = HolzingerSwineford1939,
+           group = "school")
+est <- parameterEstimates_table_list(fit,
+                                     rsquare = TRUE)
+```
+
+Because it is intended to be used inside
+a print function, it does not have a
+print method itself. Call
+`print_parameterEstimates_table_list()`
+instead:
+
+```{r}
+print_parameterEstimates_table_list(est)
+```
+
+The output looks similar to the `lavaan`
+output, except for some minor changes
+in column names (e.g., `CI.Lo` and `CI.Up`
+instead of `ci.lower` and `ci.upper`) to
+shorten the width of the print, to make
+room for additional columns developer
+may want to add. This is intentional:
+mimicking the `lavaan` style to minimize
+the need for the users to learn anything
+new in reading the output.
+
+These options are available in
+`print_parameterEstimates_table_list()`:
+
+- `nd`: Control the number of digits
+  after the decimal. Default is 3.
+
+- `by_group`: For multiple-group models,
+  whether the tables are grouped by
+  groups first, as in `lavaan`. Default
+  is `TRUE`. Setting this to `FALSE`
+  facilitates comparing groups on
+  estimates, especially when a model has
+  a lot of parameters.
+
+- `drop_cols`: A character vector of
+  columns to be dropped. Any columns can
+  be dropped. Can be used to drop columns
+  that cannot be removed when calling
+  `summary()` or `lavaan::parameterEstimates()`,
+  or columns to be dropped only when being
+  printed.
+
+- `na_str`: The string to be used for
+  blank cells, such as the standard
+  errors of fixed parameters. Default is
+  `" "`.
+
+This is an example of these arguments:
+
+```{r}
+print_parameterEstimates_table_list(est,
+                                    nd = 2,
+                                    by_group = FALSE,
+                                    drop_cols = "Z",
+                                    na_str = "--")
+```
+
+## Insert a Column Computed From Another Column
+
+Suppose we would like to insert a column
+of symbols (e.g., `"*"` and `"**"`) into
+the parameter estimates table based
+on the `pvalue` column, to denote
+whether a parameter is significant,
+
+This is the function:
+
+```{r}
+add_sig <- function(object,
+                    breaks = c(1, .05, .01, .001, -Inf),
+                    labels = c("***", "** ", "*  ", "  ")) {
+    tmp <- object[, "pvalue", drop = TRUE]
+    if (!is.null(tmp)) {
+        tmp[is.na(tmp)] <- 1
+        tmp2 <- cut(tmp,
+                    breaks = breaks,
+                    labels = labels)
+        i <- match("pvalue", colnames(object))
+        out <- data.frame(object[, 1:i],
+                          Sig = tmp2,
+                          object[, seq(i + 1, ncol(object))])
+      }
+    out
+  }
+```
+
+This can be done by the argument `est_funs`:
+
+```{r}
+model_cfa <- "visual  =~ x1 + x2 + x3
+              textual =~ x4 + x5 + x6"
+fit <- cfa(model_cfa,
+           data = HolzingerSwineford1939[1:100, ])
+est <- parameterEstimates_table_list(fit,
+                                     est_funs = list(add_sig))
+print_parameterEstimates_table_list(est)
+```
+
+Note that `est_funs` must be a list, even if only one
+function is supplied.
+
+## Add a Header or Footer Section
+
+Header or footer functions can be used to
+include a header or footer section.
+
+If the input object of `parameterEstimates_table_list()`
+is a `lavaan` object, then the function
+is called with the first argument being
+the *parameter* *estimates*
+table generated by `lavaan::parameterEstimates()`)
+with `output = "text", header = TRUE`.
+
+If the input object of `parameterEstimates_table_list()`
+is a data-frame-like object, such as a
+modified output of `lavaan::parameterEstimates()`,
+then the function is called with this
+object as the first argument.
+
+The following is a simple function to print
+the missing data handling method. The
+attribute `section_title` is used to
+set the title for this section. By
+default, `print()` will be used to print
+a section.
+
+```{r}
+lavaan_missing <- function(x) {
+    out0 <- attr(x, "missing")
+    out1 <- data.frame(Option = "Missing",
+                       Setting = out0)
+    attr(out1, "section_title") <- "Additional Information:"
+    out1
+  }
+```
+
+This is a function to add some footnotes.
+The output is a character vector, which
+should be printed by `cat()`. This can
+be done by setting the attribute
+`print_fun` to `"cat"`. If the print
+function is `cat()`, the section is
+printed with `sep = "\n"`.
+
+```{r}
+footnotes <- function(x) {
+    out0 <- c("- This is footnote 1.",
+              "- This is footnote 2.")
+    attr(out0, "section_title") <- "Footnote:"
+    attr(out0, "print_fun") <- "cat"
+    out0
+  }
+```
+
+These functions can then be used in
+`header_funs` and `footer_funs`:
+
+```{r}
+model_cfa <- "visual  =~ x1 + x2 + x3"
+fit <- cfa(model_cfa,
+           data = HolzingerSwineford1939)
+est <- parameterEstimates_table_list(fit,
+                                     header_funs = list(lavaan_missing),
+                                     footer_funs = list(footnotes))
+print_parameterEstimates_table_list(est)
+```
+
+Like `est_funs`, the value of `header_funs`
+(and `footer_funs`) must be list.
+
+# Further Information
+
+There are other ways to customize the
+output when calling `parameterEstimates_table_list()`.
+For example:
+
+- Drop one or more columns.
+
+- Rename one or more columns.
+
+- Set arguments when calling functions in
+  `est_funs`, `header_funs`, and
+  `footer_funs`.
+
+Please refer to the help page of
+`parameterEstimates_table_list()` for
+details.
+
+# Issues
+
+If you have any suggestions and found any bugs, please feel
+feel to open a GitHub issue. Thanks.
