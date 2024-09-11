@@ -360,9 +360,28 @@ to_tables_per_group <- function(section,
 #' @noRd
 # Print the header or footer, created by header_funs and/or footer_funs
 print_header <- function(xx) {
+    xx_org <- xx
     pfun <- attr(xx, "print_fun")
+    ptmp2 <- attr(xx, "print_args")
+    section_title <- attr(xx, "section_title")
+    if (is.null(ptmp2)) {
+        ptmp2 <- list()
+      }
     if (is.null(pfun)) {
         pfun <- "print"
+      }
+    if (pfun == "cat") {
+        ptmp2 <- utils::modifyList(list(sep = "\n"),
+                                   ptmp2)
+      }
+    if (!isFALSE(attr(xx, "wrap_lines")) && is.character(xx)) {
+        strwrap_args <- attr(xx, "strwrap_args")
+        if (is.null(strwrap_args)) {
+            strwrap_args <- list()
+          }
+        strwrap_args <- utils::modifyList(strwrap_args,
+                                          list(x = xx))
+        xx <- do.call(strwrap, strwrap_args)
       }
     ptmp1 <- list(x = xx)
     if ((pfun == "print") && is.data.frame(xx)) {
@@ -370,13 +389,12 @@ print_header <- function(xx) {
                     list(right = FALSE,
                         row.names = FALSE))
       }
-    ptmp2 <- attr(xx, "print_args")
     if (is.list(ptmp2)) {
         ptmp <- utils::modifyList(ptmp1,
                                   ptmp2)
       }
     tmp <- utils::capture.output(do.call(methods::getFunction(pfun), ptmp))
-    cat("\n", attr(xx, "section_title"), "\n", sep = "")
+    cat("\n", section_title, "\n", sep = "")
     cat(tmp, sep = "\n")
     invisible(NULL)
   }
