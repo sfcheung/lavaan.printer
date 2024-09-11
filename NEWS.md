@@ -1,4 +1,4 @@
-# lavaan.printer 0.0.0.9004
+# lavaan.printer 0.0.0.9005
 
 - Add `est_funs_args`, `header_funs_args`,
   and `footer_funs_args`. (0.0.0.9001)
@@ -11,6 +11,9 @@
 - Add support for line wrapping when
   a section is a character vector,
   usually a list of notes. (0.0.0.9004)
+
+- Set heading rows of grouped parameters
+  (e.g., `x =~`) to blank. (0.0.0.9005)
 
 # lavaan.printer 0.0.0.9000
 

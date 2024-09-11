@@ -828,3 +828,25 @@ set_col_names <- function(x,
     colnames(x) <- cnames_old
     x
   }
+
+#' @noRd
+
+fix_grouped_rows <- function(yy,
+                             na_str) {
+    if (nchar(trimws(na_str)) == 0) {
+        return(yy)
+      }
+    for (i in seq_len(nrow(yy))) {
+        na_ws <- paste0(rep(" ", nchar(na_str)),
+                        collapse = "")
+        all_na <- all(apply(yy[i, -1],
+                            MARGIN = 1,
+                            function(x) {trimws(x) == na_str}))
+        if (all_na) {
+            yy[i, -1] <- gsub(na_str,
+                              na_ws,
+                              yy[i, -1])
+          }
+      }
+    return(yy)
+  }
