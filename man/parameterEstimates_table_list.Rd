@@ -259,9 +259,20 @@ If a list of functions
 is supplied to \code{header_funs} or
 \code{footer_funs}, they will be used
 to generate the headers and/or
-footers. The input is \code{object}, or
-the parameter estimates table
-generated from object. The output
+footers. The first argument of these
+function will be one of the followings.
+
+If \code{object} is a data frame like
+object, then the first argument is
+this object when calling thews functions.
+
+If \code{object} is a \code{lavaan} object,
+then the first argument is the
+parameter estimates table generated
+by \code{\link[lavaan:parameterEstimates]{lavaan::parameterEstimates()}}
+with \verb{output = "text", header = TRUE}.
+
+The output of these functions
 should be one of the following
 formats.
 

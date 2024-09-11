@@ -1,5 +1,7 @@
 destination: docs
 
+url: https://sfcheung.github.io/lavaan.printer/
+
 template:
   bootstrap: 5
   bootswatch: cerulean

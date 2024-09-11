@@ -67,9 +67,20 @@
 #' is supplied to `header_funs` or
 #' `footer_funs`, they will be used
 #' to generate the headers and/or
-#' footers. The input is `object`, or
-#' the parameter estimates table
-#' generated from object. The output
+#' footers. The first argument of these
+#' function will be one of the followings.
+#'
+#' If `object` is a data frame like
+#' object, then the first argument is
+#' this object when calling thews functions.
+#'
+#' If `object` is a `lavaan` object,
+#' then the first argument is the
+#' parameter estimates table generated
+#' by [lavaan::parameterEstimates()]
+#' with `output = "text", header = TRUE`.
+#'
+#' The output of these functions
 #' should be one of the following
 #' formats.
 #'
