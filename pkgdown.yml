@@ -1,5 +1,9 @@
 pandoc: 3.1.11
 pkgdown: 2.1.0
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-09-11T00:45Z
+articles:
+  lavaan.printer: lavaan.printer.html
+last_built: 2024-09-11T16:17Z
+urls:
+  reference: https://sfcheung.github.io/lavaan.printer/reference
+  article: https://sfcheung.github.io/lavaan.printer/articles
