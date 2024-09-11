@@ -6,7 +6,7 @@
 [![R-CMD-check](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-(Version 0.0.0.9004, updated on 2024-09-11, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
+(Version 0.0.0.9006, updated on 2024-09-11, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
 
 # `lavaan.printer`: Customize Printout of `lavaan` Parameter Estimates
 
@@ -30,6 +30,23 @@ package can be installed by `remotes::install_github`:
 ```r
 remotes::install_github("sfcheung/lavaan.printer")
 ```
+
+# Background
+
+I wrote these two functions because I
+want to customize how the parameter estimate
+tables of a `lavaan` object are printed
+in my packages. The style should be very
+similar to that
+used by the `summary()` method of `lavaan`,
+such that users would find the tables
+easy to read. However, it is not easy to
+customize the output of `lavaan` because
+it prints the formatted content directly
+to the screen. Therefore, I wrote
+`parameterEstimates_table_list()`
+to mimic what `lavaan` does, but create
+a list of tables (data frames) instead.
 
 # Issues
 

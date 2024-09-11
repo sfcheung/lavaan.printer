@@ -101,6 +101,8 @@ print_parameterEstimates_table_list <- function(x,
         yy <- format_other_cols(yy,
                                 nd = nd,
                                 na_str = na_str)
+        yy <- fix_grouped_rows(yy,
+                               na_str = na_str)
         out1[[xx]] <- yy
       }
 
