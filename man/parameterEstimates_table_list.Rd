@@ -204,6 +204,16 @@ or model constraints (\code{"Constraints"}).
 \item \code{header}: A list of header sections.
 \item \code{footer}: A list of footer sections.
 }
+
+The decision of not having a \code{print}
+method is intentional. It is intended
+to be used by other
+the \code{print} methods of other classes,
+to create the formatted list of
+tables,
+and then print it by calling
+\code{\link[=print_parameterEstimates_table_list]{print_parameterEstimates_table_list()}}
+internally.
 }
 
 \subsection{\code{\link[=print_parameterEstimates_table_list]{print_parameterEstimates_table_list()}}}{
@@ -238,7 +248,7 @@ which will format the cells before
 printing them.
 
 This function is not intended to be
-used by end users. It is intended
+used by end-users. It is intended
 to be used inside other functions,
 such as a print method. Functions
 that add columns to the parameter
@@ -367,7 +377,7 @@ add_sig <- function(object,
     if (!is.null(tmp)) {
         tmp[is.na(tmp)] <- 1
         tmp2 <- ifelse(tmp < .001, "***", "")
-        i <- match("pvalue", colnames(object))
+        i <- match(pvalue, colnames(object))
         out <- data.frame(object[, 1:i],
                           Sig = tmp2,
                           object[, seq(i + 1, ncol(object))])

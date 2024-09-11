@@ -6,7 +6,7 @@
 \alias{lavaan.printer-package}
 \title{lavaan.printer: Helper Functions For Printing 'lavaan' Outputs}
 \description{
-Helpers for customizing selected outputs from 'lavaan' by Rosseel (2012) \doi{10.18637/jss.v048.i02} and print them. The functions are intended to be used by package developers in their packages and so are not designed to be user-friendly. They are designed to be customizable.
+Helpers for customizing selected outputs from 'lavaan' by Rosseel (2012) \doi{10.18637/jss.v048.i02} and print them. The functions are intended to be used by package developers in their packages and so are not designed to be user-friendly. They are designed to be highly customizable. Currently support the parameter estimates tables of a fitted object.
 }
 \seealso{
 Useful links:

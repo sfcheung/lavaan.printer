@@ -1,6 +1,6 @@
 Package: lavaan.printer
 Title: Helper Functions For Printing 'lavaan' Outputs
-Version: 0.0.0.9006
+Version: 0.1.0
 Authors@R:
     c(person(given = "Shu Fai",
              family = "Cheung",
@@ -12,7 +12,8 @@ Description: Helpers for customizing selected outputs from
   and print them. The functions are intended to be used
   by package developers in their packages and so are not
   designed to be user-friendly. They are designed to be
-  customizable.
+  highly customizable. Currently support the parameter
+  estimates tables of a fitted object.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
