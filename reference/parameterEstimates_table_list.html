@@ -15,7 +15,7 @@ argument output = "text" does.'><meta name="google-site-verification" content="0
 
     <a class="navbar-brand me-2" href="../index.html">lavaan.printer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -290,7 +290,16 @@ parameters (<code>"Defined Parameters"</code>)
 or model constraints (<code>"Constraints"</code>).</p></li>
 <li><p><code>header</code>: A list of header sections.</p></li>
 <li><p><code>footer</code>: A list of footer sections.</p></li>
-</ul></div>
+</ul><p>The decision of not having a <code>print</code>
+method is intentional. It is intended
+to be used by other
+the <code>print</code> methods of other classes,
+to create the formatted list of
+tables,
+and then print it by calling
+<code>print_parameterEstimates_table_list()</code>
+internally.</p>
+</div>
 
 <div class="section">
 <h3 id="print-parameterestimates-table-list-"><code>print_parameterEstimates_table_list()</code><a class="anchor" aria-label="anchor" href="#print-parameterestimates-table-list-"></a></h3>
@@ -320,7 +329,7 @@ actual printing is to be done by
 which will format the cells before
 printing them.</p>
 <p>This function is not intended to be
-used by end users. It is intended
+used by end-users. It is intended
 to be used inside other functions,
 such as a print method. Functions
 that add columns to the parameter
@@ -740,7 +749,7 @@ table.</p></div>
 <span class="r-in"><span>    <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>        <span class="va">tmp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span>        <span class="va">tmp2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">tmp</span> <span class="op">&lt;</span> <span class="fl">.001</span>, <span class="st">"***"</span>, <span class="st">""</span><span class="op">)</span></span></span>
-<span class="r-in"><span>        <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="st">"pvalue"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>        <span class="va">i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="va">pvalue</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>        <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">object</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="va">i</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>                          Sig <span class="op">=</span> <span class="va">tmp2</span>,</span></span>
 <span class="r-in"><span>                          <span class="va">object</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">i</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>

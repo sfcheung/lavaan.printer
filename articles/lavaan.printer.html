@@ -23,7 +23,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">lavaan.printer</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,10 +72,12 @@ Cheung</h4>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>This article illustrate how to use the two main functions of
-<code>lavaan.printer</code>:
-<code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code> and
-<code><a href="../reference/parameterEstimates_table_list.html">print_parameterEstimates_table_list()</a></code>.</p>
+<p>This article illustrates how to use the two main functions of
+<code>lavaan.printer</code>:</p>
+<ul>
+<li><p><code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code></p></li>
+<li><p><code><a href="../reference/parameterEstimates_table_list.html">print_parameterEstimates_table_list()</a></code></p></li>
+</ul>
 <p>These are the packages used in this article:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
@@ -88,32 +90,37 @@ Cheung</h4>
 </h2>
 <p>These two functions are not for end-users. They are for package
 developers, and are intended to be used internally by
-<code>print</code>-methods or similar functions for the objects in these
-packages.</p>
+<code>print</code>-methods or similar functions for the objects in other
+packages which generate customized parameter tables.</p>
 <ul>
 <li><p><code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>: creates a
 <code>parameterEstimates_table_list</code> object which is a list of
-data frames, organized based on the output for parameter estimates in
-the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output of <code>lavaan</code>. The data
-frames can be customized in a lot of ways, such as adding or deleting
-columns created by user-supplied functions or adding header sections or
-footer sections.</p></li>
+data frames, organized based on the sections for parameter estimates in
+the <code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> output of <code>lavaan</code>, such as factor
+loadings (<code>Latent Variables</code>) and covariances
+(<code>Covariances</code>). The data frames can be customized in a lot
+of ways, such as adding columns created by user-supplied functions, or
+adding header sections or footer sections.</p></li>
 <li><p><code><a href="../reference/parameterEstimates_table_list.html">print_parameterEstimates_table_list()</a></code>: It prints a
 <code>parameterEstimates_table_list</code> object, with some degree of
-customization. Most of the customization is done when calling
-<code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>.</p></li>
+customization. Most of the customization should be done when calling
+<code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>. The cells are formatted as
+strings across sections when being printed to ensure that the column
+widths are consistent.</p></li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="scenarios">Scenarios<a class="anchor" aria-label="anchor" href="#scenarios"></a>
 </h2>
 <div class="section level3">
-<h3 id="just-create-a-list-of-data-frames">Just Create a List of Data frames<a class="anchor" aria-label="anchor" href="#just-create-a-list-of-data-frames"></a>
+<h3 id="create-a-list-of-data-frames">Create a List of Data frames<a class="anchor" aria-label="anchor" href="#create-a-list-of-data-frames"></a>
 </h3>
 <p>In the simplest case, <code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>
-can bee used to generate the usual parameter estimates results of
-<code>lavaan</code>, but as a list of data frames. Arguments for to
-<code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code> can be used when calling
+can be used to generate the usual parameter estimates results of
+<code>lavaan</code>, but as a list of data frames, each corresponding to
+a section in the output (e.g., regression coefficients, factor
+loadings). Arguments for to <code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code>
+can be used when calling
 <code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Adapted from the example of cfa()</span></span>
@@ -459,20 +466,28 @@ function is supplied.</p>
 <h3 id="add-a-header-or-footer-section">Add a Header or Footer Section<a class="anchor" aria-label="anchor" href="#add-a-header-or-footer-section"></a>
 </h3>
 <p>Header or footer functions can be used to include a header or footer
-section.</p>
-<p>If the input object of <code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>
-is a <code>lavaan</code> object, then the function is called with the
-first argument being the <em>parameter</em> <em>estimates</em> table
-generated by <code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code>) with
-<code>output = "text", header = TRUE</code>.</p>
-<p>If the input object of <code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code>
-is a data-frame-like object, such as a modified output of
-<code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code>, then the function is called
-with this object as the first argument.</p>
+section. The first argument will be one of the following object:</p>
+<ul>
+<li><p>If the input object of
+<code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code> is a <code>lavaan</code>
+object, then the function is called with the first argument being the
+<em>parameter</em> <em>estimates</em> table generated by
+<code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code>) with
+<code>output = "text", header = TRUE</code>.</p></li>
+<li><p>If the input object of
+<code><a href="../reference/parameterEstimates_table_list.html">parameterEstimates_table_list()</a></code> is a data-frame-like
+object, such as a modified output of
+<code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code> generated by other functions,
+then the function is called with this object as the first argument.
+Header and footer sections can then be created using attributes stored
+in this object.</p></li>
+</ul>
 <p>The following is a simple function to print the missing data handling
-method. The attribute <code>section_title</code> is used to set the
-title for this section. By default, <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> will be used to
-print a section.</p>
+method, stored in the output of
+<code><a href="https://rdrr.io/pkg/lavaan/man/parameterEstimates.html" class="external-link">lavaan::parameterEstimates()</a></code> when printed with
+<code>output = "text", header = "TRUE"</code>. The attribute
+<code>section_title</code> is used to set the title for this section. By
+default, <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> will be used to print a section.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lavaan_missing</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">out0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">x</span>, <span class="st">"missing"</span><span class="op">)</span></span>
@@ -485,11 +500,13 @@ print a section.</p>
 vector, which should be printed by <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>. This can be done
 by setting the attribute <code>print_fun</code> to <code>"cat"</code>.
 If the print function is <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>, the section is printed with
-<code>sep = "\n"</code>.</p>
+<code>sep = "\n"</code> by default.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">footnotes</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">out0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"- This is footnote 1."</span>,</span>
-<span>              <span class="st">"- This is footnote 2."</span><span class="op">)</span></span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"- This is footnote 2, a very very very very very"</span>,</span>
+<span>                    <span class="st">"very very very very very very very very very very"</span>,</span>
+<span>                    <span class="st">"very very long one. Wrapped by default"</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">out0</span>, <span class="st">"section_title"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Footnote:"</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">out0</span>, <span class="st">"print_fun"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"cat"</span></span>
 <span>    <span class="va">out0</span></span>
@@ -531,7 +548,8 @@ If the print function is <code><a href="https://rdrr.io/r/base/cat.html" class="
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Footnote:</span></span>
 <span><span class="co">#&gt; - This is footnote 1.</span></span>
-<span><span class="co">#&gt; - This is footnote 2.</span></span></code></pre></div>
+<span><span class="co">#&gt; - This is footnote 2, a very very very very very very very very very</span></span>
+<span><span class="co">#&gt; very very very very very very very very long one. Wrapped by default</span></span></code></pre></div>
 <p>Like <code>est_funs</code>, the value of <code>header_funs</code>
 (and <code>footer_funs</code>) must be list.</p>
 </div>
@@ -554,7 +572,8 @@ If the print function is <code><a href="https://rdrr.io/r/base/cat.html" class="
 <h2 id="issues">Issues<a class="anchor" aria-label="anchor" href="#issues"></a>
 </h2>
 <p>If you have any suggestions and found any bugs, please feel feel to
-open a GitHub issue. Thanks.</p>
+open a <a href="https://github.com/sfcheung/lavaan.printer/issues" class="external-link">GitHub
+issue</a>. Thanks.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
