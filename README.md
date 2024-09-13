@@ -1,14 +1,12 @@
 <!-- badges: start -->
-[![Lifecycle: Experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Code size](https://img.shields.io/github/languages/code-size/sfcheung/lavaan.printer.svg)](https://github.com/sfcheung/lavaan.printer)
 [![Last Commit at Main](https://img.shields.io/github/last-commit/sfcheung/lavaan.printer.svg)](https://github.com/sfcheung/lavaan.printer/commits/main)
 [![R-CMD-check](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-(Version 0.0.0.9006, updated on 2024-09-11, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
+(Version 0.1.0, updated on 2024-09-12, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
 
-# `lavaan.printer`: Customize Printout of `lavaan` Parameter Estimates
+# `lavaan.printer`: Customize The Printout of `lavaan` Parameter Estimates
 
 This package includes helper functions
 for developers to customize the printout
@@ -47,6 +45,9 @@ to the screen. Therefore, I wrote
 `parameterEstimates_table_list()`
 to mimic what `lavaan` does, but create
 a list of tables (data frames) instead.
+
+The [quick-start guide](https://sfcheung.github.io/lavaan.printer/articles/lavaan.printer.html)
+illustrates how to use these functions.
 
 # Issues
 

@@ -754,25 +754,24 @@ insert_lhs <- function(est_i) {
         est_i$tmp0b <- match(est_i$efa, efa0)
         est_i$tmp1 <- seq_len(nrow(est_i))
         # R > 4.4.0
-        if (getRversion() > "4.4.0") {
-            est_i <- base::sort_by(est_i, ~ tmp0b + tmp0 + tmp1)
-          } else {
+        # if (getRversion() > "4.4.0") {
+        #     est_i <- base::sort_by(est_i, ~ tmp0b + tmp0 + tmp1)
+          # } else {
             est_i <- est_i[order(est_i$tmp0b,
                                  est_i$tmp0,
                                  est_i$tmp1), ]
-          }
+          # }
       } else {
         lhs0 <- unique(est_i$lhs)
         est_i$tmp0 <- match(est_i$lhs, lhs0)
         est_i$tmp1 <- seq_len(nrow(est_i))
         # R > 4.4.0
-        if (getRversion() > "4.4.0") {
-            est_i <- base::sort_by(est_i, ~ tmp0 + tmp1)
-          } else {
+        # if (getRversion() > "4.4.0") {
+        #     est_i <- base::sort_by(est_i, ~ tmp0 + tmp1)
+        #   } else {
             est_i <- est_i[order(est_i$tmp0,
                                  est_i$tmp1), ]
-          }
-
+          # }
       }
     est_i1 <- split(est_i, est_i$tmp0)
     est_i2 <- lapply(est_i1, function(xx) {
