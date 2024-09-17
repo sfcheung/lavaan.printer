@@ -1,6 +1,6 @@
 Package: lavaan.printer
 Title: Helper Functions for Printing 'lavaan' Outputs
-Version: 0.1.0
+Version: 0.1.0.1
 Authors@R:
     c(person(given = "Shu Fai",
              family = "Cheung",
