@@ -1,11 +1,12 @@
-# lavaan.printer 0.1.0.2
+# lavaan.printer 0.1.0.3
 
-- Identical to 0.1.0 in the code.
-  Updated only the Readme page on CRAN
-  status. (0.1.0.1)
+## Miscellaneous
 
 - Minor update to DESCRIPTION.
   (0.1.0.2)
+
+- Added some tests for `sam()`.
+  (0.1.0.3)
 
 # lavaan.printer 0.1.0
 
