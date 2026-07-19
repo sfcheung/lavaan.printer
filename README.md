@@ -8,7 +8,7 @@
 [![R-CMD-check](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-(Version 0.1.1, updated on 2026-07-19, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
+(Version 0.1.2, updated on 2026-07-19, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
 
 # `lavaan.printer`: Customize The Printout of `lavaan` Parameter Estimates
 
