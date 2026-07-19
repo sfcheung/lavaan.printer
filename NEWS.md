@@ -1,4 +1,4 @@
-# lavaan.printer 0.1.0.3
+# lavaan.printer 0.1.1
 
 ## Miscellaneous
 
