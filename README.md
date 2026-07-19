@@ -8,7 +8,7 @@
 [![R-CMD-check](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sfcheung/lavaan.printer/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-(Version 0.1.0.1, updated on 2024-09-17, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
+(Version 0.1.2, updated on 2026-07-19, [release history](https://sfcheung.github.io/lavaan.printer/news/index.html))
 
 # `lavaan.printer`: Customize The Printout of `lavaan` Parameter Estimates
 
@@ -22,7 +22,7 @@ are not intended for end-users.
 For more information on this package,
 please visit its GitHub page:
 
-https://sfcheung.github.io/lavaan.printer/
+[https://sfcheung.github.io/lavaan.printer/](https://sfcheung.github.io/lavaan.printer/)
 
 # Background
 
@@ -63,7 +63,7 @@ remotes::install_github("sfcheung/lavaan.printer")
 # Issues
 
 If you have any suggestions and found
-any bugs, please feel feel to open a
+any bugs, please feel free to open a
 GitHub issue. Thanks.
 
 https://github.com/sfcheung/lavaan.printer/issues

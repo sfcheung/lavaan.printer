@@ -1,6 +1,6 @@
 Package: lavaan.printer
 Title: Helper Functions for Printing 'lavaan' Outputs
-Version: 0.1.0.1
+Version: 0.1.2
 Authors@R:
     c(person(given = "Shu Fai",
              family = "Cheung",
@@ -18,7 +18,6 @@ Description: Helpers for customizing selected outputs from
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
 Suggests:
     knitr,
     rmarkdown,
@@ -31,4 +30,6 @@ Depends:
     R (>= 4.0.0)
 Config/testthat/edition: 3
 URL: https://sfcheung.github.io/lavaan.printer/
+BugReports: https://github.com/sfcheung/lavaan.printer/issues
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0
